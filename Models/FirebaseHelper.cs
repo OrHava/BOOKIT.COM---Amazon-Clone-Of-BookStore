@@ -220,10 +220,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                     if (product.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
                     {
                         searchResults.Add(product);
-                        Console.WriteLine($"Book ID: {product.BookId}");
-                        Console.WriteLine($"Name: {product.Name}");
-                        Console.WriteLine($"Author: {product.Author}");
-                        Console.WriteLine("--------------------------------------");
+                    
                     }
                 }
 
@@ -233,6 +230,31 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
             {
                 Console.WriteLine($"Error searching book products: {ex.Message}");
                 return null;
+            }
+        }
+
+        public static async Task<List<BookProduct>> GetBestSellingBooksByGenre(string genre)
+        {
+            try
+            {
+                var productsSnapshot = await firebase.Child("Products").OnceAsync<BookProduct>();
+                List<BookProduct> bestSellingBooksByGenre = new List<BookProduct>();
+
+                foreach (var productSnapshot in productsSnapshot)
+                {
+                    BookProduct product = productSnapshot.Object;
+                    if (product.Genre == genre && product.IsBestseller == true)
+                    {
+                        bestSellingBooksByGenre.Add(product);
+                    }
+                }
+
+                return bestSellingBooksByGenre;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving best selling books by genre: {ex.Message}");
+                return new List<BookProduct>();
             }
         }
 

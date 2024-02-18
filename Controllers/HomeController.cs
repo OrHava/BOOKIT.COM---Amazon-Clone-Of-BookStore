@@ -22,30 +22,39 @@ namespace FirebaseLoginAuth.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+
+
+        // Controller action
+        public async Task<IActionResult> Index()
         {
-            //just for now
-      
             var token = HttpContext.Session.GetString("_UserToken");
 
-            // Check if the user token exists in the session or if the "Remember Me" cookie exists
-            if (!string.IsNullOrEmpty(token) || Request.Cookies.ContainsKey("UserEmail") && Request.Cookies.ContainsKey("UserPassword"))
+            if (!string.IsNullOrEmpty(token) || (Request.Cookies.ContainsKey("UserEmail") && Request.Cookies.ContainsKey("UserPassword")))
             {
                 var userEmail = HttpContext.Session.GetString("_UserEmail");
 
-                // Pass the user's email to the view
-                ViewData["UserEmail"] = userEmail;
-                return View();
+                // Get best selling books for fantasy and science fiction
+                var bestSellersFantasy = await FirebaseHelper.GetBestSellingBooksByGenre("Fantasy");
+                var bestSellersScienceFiction = await FirebaseHelper.GetBestSellingBooksByGenre("Science Fiction");
 
+                // Populate the view model
+                var viewModel = new HomeViewModel
+                {
+                    BestSellersFantasy = bestSellersFantasy,
+                    BestSellersScienceFiction = bestSellersScienceFiction
+                };
+
+                ViewData["UserEmail"] = userEmail;
+                return View(viewModel); // Pass the view model to the view
             }
             else
             {
                 TempData["ErrorMessage"] = null;
-                // Otherwise, redirect to the sign-in page
                 return RedirectToAction("SignIn");
             }
-
         }
+
+
         public async Task<IActionResult> SearchBooks(string searchInput)
         {
             var userAuthId = HttpContext.Session.GetString("_UserId");
@@ -53,8 +62,22 @@ namespace FirebaseLoginAuth.Controllers
             if (!string.IsNullOrEmpty(userAuthId))
             {
                 // Perform the search in FirebaseHelper based on the search input
-                var searchResults = await FirebaseHelper.SearchBookProducts( searchInput);
-                return View("index", searchResults);
+                var searchResults = await FirebaseHelper.SearchBookProducts(searchInput);
+                // Get best selling books for fantasy and science fiction
+                var bestSellersFantasy = await FirebaseHelper.GetBestSellingBooksByGenre("Fantasy");
+                var bestSellersScienceFiction = await FirebaseHelper.GetBestSellingBooksByGenre("Science Fiction");
+
+             
+
+                // Pass the search results to the view
+                var viewModel = new HomeViewModel
+                {
+                    SearchResults = searchResults,
+                       BestSellersFantasy = bestSellersFantasy,
+                    BestSellersScienceFiction = bestSellersScienceFiction
+                };
+
+                return View("Index", viewModel);
             }
             else
             {

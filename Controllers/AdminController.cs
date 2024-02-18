@@ -108,8 +108,17 @@ namespace FirebaseLoginAuth.Controllers
                 }
                 else
                 {
-                    TempData["ErrorMessage"] = "Model state is not valid.";
-                }
+                    bool result = await FirebaseHelper.UpdateBookProduct(bookProduct, image, userAuthId);
+                    if (result)
+                    {
+                        TempData["SuccessMessage"] = "Book product updated successfully!";
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Failed to update book product.";
+                    }
+                
+            }
 
                 if (bookProduct.BookId != null)
                 {

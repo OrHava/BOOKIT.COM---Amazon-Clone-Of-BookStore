@@ -1,4 +1,5 @@
-﻿@model List<FirebaseLoginAuth.Models.BookProduct>
+﻿@model FirebaseLoginAuth.Models.HomeViewModel
+
 @using Newtonsoft.Json
 
 
@@ -30,7 +31,7 @@
 
 <style>
     body {
-        background: linear-gradient(to bottom right, #CCE5FF, #99CCFF, #66B2FF, #3399FF, #0077FF, #0055CC);
+        background-color: rgba(227, 230, 230, 1);
         font-family: Arial, sans-serif;
     }
     .welcome-text {
@@ -83,6 +84,11 @@
         height: 50px; /* Increase input height */
         border-radius: 8px; /* Add rounded corners to inputs */
         border: 1px solid #ccc; /* Add a border for better visibility */
+    }
+
+    .modern-card {
+        background-color: rgba(255, 255, 255, 2);
+        margin-bottom: 20px;
     }
 
     .modern-input {
@@ -161,7 +167,7 @@
 
 <div class="container mt-4">
     <h3>Books Found</h3>
-    @if (Model != null && Model.Any())
+    @if (Model.SearchResults != null && Model.SearchResults.Any())
     {
         <table class="table table-striped">
             <thead>
@@ -174,7 +180,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var book in Model)
+                @foreach (var book in Model.SearchResults)
                 {
                     <tr>
                         <td>@book.Name</td>
@@ -199,3 +205,56 @@
 
 
 
+<div class="modern-card">
+    <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Science Fiction</h2>
+        <div class="container" style="overflow-x: auto;">
+            <div class="row" style="white-space: nowrap;">
+                <!-- Ensure horizontal scrolling with nowrap -->
+            @if (Model.BestSellersScienceFiction != null && Model.BestSellersScienceFiction.Any())
+                {
+                    <div class="col-md-12" style="padding-right: 5px; display: inline-block;">
+                        <!-- Adjust the column width and add padding for spacing -->
+                    @foreach (var book in Model.BestSellersScienceFiction)
+                        {
+                            <div class="card" style="width: 120px; display: inline-block; margin-right: 10px;">
+                                <img src="@book.ImageUrl" class="card-img-top img-thumbnail" alt="Book Image" style="max-width: 100%; max-height: 150px;">
+
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p>No best-selling fantasy books found.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+
+
+<div class="modern-card">
+        <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Fantasy</h2>
+        <div class="container" style="overflow-x: auto;">
+            <div class="row" style="white-space: nowrap;">
+                <!-- Ensure horizontal scrolling with nowrap -->
+                @if (Model.BestSellersFantasy != null && Model.BestSellersFantasy.Any())
+                {
+                    <div class="col-md-12" style="padding-right: 5px; display: inline-block;">
+                        <!-- Adjust the column width and add padding for spacing -->
+                        @foreach (var book in Model.BestSellersFantasy)
+                        {
+                            <div class="card" style="width: 120px; display: inline-block; margin-right: 10px;">
+                                <img src="@book.ImageUrl" class="card-img-top img-thumbnail" alt="Book Image" style="max-width: 100%; max-height: 150px;">
+
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p>No best-selling fantasy books found.</p>
+                }
+            </div>
+        </div>
+    </div>
