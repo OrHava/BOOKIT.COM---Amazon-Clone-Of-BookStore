@@ -90,7 +90,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
         {
             try
             {
-                var products = await firebase.Child("users").Child(uid).Child("Products").OnceAsync<BookProduct>();
+                var products = await firebase.Child("Products").OnceAsync<BookProduct>();
 
                 var bookProduct = products.FirstOrDefault(p => p.Object.BookId == productId.ToString())?.Object;
 
