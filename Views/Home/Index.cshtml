@@ -1,0 +1,201 @@
+﻿@model List<FirebaseLoginAuth.Models.BookProduct>
+@using Newtonsoft.Json
+
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+
+      <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+
+    <!-- Include jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- Include Select2 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Include Select2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+
+
+</head>
+
+<style>
+    body {
+        background: linear-gradient(to bottom right, #CCE5FF, #99CCFF, #66B2FF, #3399FF, #0077FF, #0055CC);
+        font-family: Arial, sans-serif;
+    }
+    .welcome-text {
+        font-size: 1rem; /* Adjust the font size of the welcome text */
+        margin-top: 0.5rem; /* Add some top margin for spacing */
+    }
+
+    .avatar-icon {
+        width: 30px; /* Adjust the width of the avatar icon */
+        height: auto; /* Maintain aspect ratio */
+        margin-left: 10px; /* Add some left margin for spacing */
+    }
+
+    .logout-icon {
+        width: 24px; /* Adjust the width of the logout icon */
+        height: auto; /* Maintain aspect ratio */
+    }
+
+    .text-right {
+        text-align: right; /* Align the text and icons to the right */
+    }
+
+    .logout-link {
+        color: #333; /* Ensure the color of the logout link is visible */
+        text-decoration: none; /* Remove default underline from the link */
+        margin-right: 10px; /* Add right margin to the logout link */
+    }
+
+        .logout-link:hover {
+            color: #555; /* Change color on hover for better visibility */
+        }
+
+    /* Adjust padding and margin for the row */
+    .row {
+        margin-left: -5px;
+        margin-right: -5px;
+    }
+
+
+  
+
+    .search-row {
+        background: rgba(255, 255, 255, 0.3);
+        padding: 20px; /* Add padding for spacing */
+        border-radius: 10px; /* Add some rounded corners */
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    }
+
+    .search-input {
+        height: 50px; /* Increase input height */
+        border-radius: 8px; /* Add rounded corners to inputs */
+        border: 1px solid #ccc; /* Add a border for better visibility */
+    }
+
+    .modern-input {
+        height: 50px;
+ 
+        border-radius: 8px;
+        border: 1px solid #ced4da;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: normal;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+        .modern-input:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+
+    .search-button {
+        border-radius: 8px; /* Add rounded corners to button */
+        height: 50px; /* Increase button height */
+        padding: 0 30px; /* Add padding for button text */
+        font-size: 18px; /* Increase font size */
+    }
+
+        /* Hover effect for button */
+        .search-button:hover {
+            background-color: #1e90ff; /* Change background color on hover */
+            border-color: #1e90ff; /* Change border color on hover */
+        }
+
+</style>
+<div class="container">
+    <div class="row">
+       
+        @if (TempData.ContainsKey("UserEmail"))
+        {
+            <h4 class="welcome-text">Welcome @TempData["UserEmail"]!</h4>
+        }
+
+     
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<!-- Display Error Message -->
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+<div class="container mt-4">
+    <form asp-action="SearchBooks" method="post">
+        <div class="row search-row">
+            <div class="col-md-4">
+                <input type="text" class="form-control search-input" id="searchInput" name="searchInput" placeholder="Search for books">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary search-button">Search</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="container mt-4">
+    <h3>Books Found</h3>
+    @if (Model != null && Model.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Release Date</th>
+                  
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var book in Model)
+                {
+                    <tr>
+                        <td>@book.Name</td>
+                        <td>@book.Author</td>
+                        <td>@(book.ReleaseDate.HasValue ? book.ReleaseDate.Value.ToString("yyyy-MM-dd") : "N/A")</td>
+                     
+                        <td>
+                            <a class="btn btn-primary" href="#">View Details</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No books found.</p>
+    }
+</div>
+
+
+
+
+

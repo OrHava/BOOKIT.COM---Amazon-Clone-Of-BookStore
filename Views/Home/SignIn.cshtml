@@ -1,0 +1,257 @@
+﻿@model FirebaseLoginAuth.Models.LoginModel
+
+@{
+    ViewData["Title"] = "Sign In";
+}
+
+<style>
+
+    .flip-container {
+        perspective: 1000px;
+    }
+
+        .flip-container:hover .flipper,
+        .flip-container.flip .flipper {
+            transform: rotateY(180deg);
+        }
+
+    .flip-container,
+    .front,
+    .back {
+        width: 100%;
+        height: 100%;
+    }
+
+    .flipper {
+        transition: 0.6s;
+        transform-style: preserve-3d;
+        position: relative;
+    }
+
+    .front,
+    .back {
+        backface-visibility: hidden;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .front {
+        z-index: 2;
+    }
+
+    .back {
+        transform: rotateY(180deg);
+    }
+
+    body {
+        background: linear-gradient(to bottom right, #CCE5FF, #99CCFF, #66B2FF, #3399FF, #0077FF, #0055CC);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Set font family */
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom:40px;
+        width: 100vw;
+        height: 100vh; /* Set container height to full viewport height */
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.3); /* Set card background color */
+        border-radius: 20px; /* Add border radius for rounded corners */
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Add box shadow for depth */
+        padding: 40px; /* Add padding for content */
+        max-width: 400px; /* Limit card width */
+        height: 600px;
+        max-height:1000px;
+        margin-bottom:60px;
+        width: 60%; /* Make card responsive */
+        transition: transform 0.3s ease; /* Add transition for hover effect */
+    }
+
+        
+
+    h1 {
+        text-align: center; /* Center-align heading */
+        margin-bottom: 30px; /* Add space below heading */
+        color: #333; /* Set heading color */
+        font-weight: 700; /* Set heading font weight */
+        letter-spacing: 1px; /* Add letter spacing */
+    }
+
+    .form-group {
+        margin-bottom: 25px; /* Add space between form groups */
+    }
+
+    input[type="submit"] {
+        width: 100%; /* Make submit button full-width */
+        background-color: #4CAF50; /* Set button background color */
+        color: white; /* Set button text color */
+        border: none; /* Remove button border */
+        padding: 14px 20px; /* Add padding */
+        border-radius: 8px; /* Add border radius */
+        cursor: pointer; /* Change cursor on hover */
+        transition: background-color 0.3s ease; /* Add transition for hover effect */
+        font-weight: 600; /* Set button font weight */
+        letter-spacing: 1px; /* Add letter spacing */
+    }
+
+        input[type="submit"]:hover {
+            background-color: #45a049; /* Change button background color on hover */
+        }
+
+    a {
+        display: block; /* Display back link as block element */
+        text-align: center; /* Center-align back link */
+        margin-top: 20px; /* Add space above back link */
+        color: #007bff; /* Set link color */
+        text-decoration: none; /* Remove underline from link */
+        transition: color 0.3s ease; /* Add transition for hover effect */
+        font-weight: 500; /* Set link font weight */
+    }
+
+        a:hover {
+            color: #0056b3; /* Change link color on hover */
+        }
+
+    .form-control {
+        border: 1px solid #ccc; /* Set border color */
+        border-radius: 8px; /* Add border radius */
+        padding: 12px 15px; /* Add padding */
+        width: 100%; /* Set input width to full */
+        font-size: 16px; /* Set font size */
+        transition: border-color 0.3s ease; /* Add transition for border color */
+    }
+
+        .form-control:focus {
+            outline: none; /* Remove outline on focus */
+            border-color: #007bff; /* Change border color on focus */
+        }
+
+    .text-danger {
+        color: #dc3545; /* Set text danger color */
+        font-size: 14px; /* Set font size */
+    }
+
+    #photo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 5px; /* Adjust margin as needed */
+        border-radius: 20px;
+        margin-right: 100px;
+        max-width: 600px; /* Limit card width */
+        height: 600px;
+        max-height: 1000px;
+        margin-bottom: 70px;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+        #photo-container img {
+
+            max-width: 100%; /* Ensure the image does not exceed the container width */
+            max-height: 100%; /* Ensure the image does not exceed the container height */
+        }
+
+    #photo-container2 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 5px; /* Adjust margin as needed */
+        border-radius: 20px;
+ 
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+        #photo-container2 img {
+            max-width: 100%; /* Ensure the image does not exceed the container width */
+            max-height: 100%; /* Ensure the image does not exceed the container height */
+        }
+
+    .form-row {
+        display: flex;
+        justify-content: space-between; /* This will space the elements evenly */
+        align-items: center; /* This will vertically center the elements */
+    }
+</style>
+
+<div class="container">
+    <div class="form-row">
+    
+            <div id="photo-container">
+            <img src='~/assets/BookIt.gif' alt="Example Photo" width="600" height="600" />
+            </div>
+   
+
+    <div class="card">
+            @if (TempData.ContainsKey("Message"))
+            {
+                <div class="alert alert-success" role="alert">
+                    @TempData["Message"]
+                </div>
+            }
+
+         
+        <h1>Sign In</h1>
+        <form asp-action="SignIn">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input type="email" asp-for="Email" class="form-control" placeholder="Email" autocomplete="email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="password" asp-for="Password" class="form-control" placeholder="Password" autocomplete="current-password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Login" />
+                <a asp-action="ForgotPassword" class="btn btn-link">Forgot Password?</a>
+            </div>
+            <div class="form-group">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="rememberMe" name="rememberMe" />
+                    <label class="form-check-label" for="rememberMe">
+                        Remember Me
+                    </label>
+                </div>
+            </div>
+        </form>
+        <a asp-action="Registration">Create an Account</a>
+            <!-- Photo Flip Container -->
+        <div class="flip-container" ontouchstart="this.classList.toggle('hover')">
+            <div class="flipper">
+                <div class="front">
+                    <div id="photo-container2">
+                        <img src='~/assets/picture1.png' alt="Example Photo" width="50" height="50" />
+                    </div>
+                </div>
+                <div class="back">
+                    <div id="photo-container2">
+                            <img src='~/assets/picture2.png' alt="Example Photo" width="50" height="50" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End of Photo Flip Container -->
+
+    
+
+
+    </div>
+
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+
+}
