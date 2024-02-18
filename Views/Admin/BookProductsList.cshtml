@@ -31,8 +31,11 @@
                     <th scope="col">Country</th>
                     <th scope="col">Dimensions</th>
                     <th scope="col">Weight</th>
-                    <th scope="col">Edition</th>
+                    <th scope="col">Edition</th>      
+                    <th scope="col">Age Limitation</th>
+                    <th scope="col">is On Sell</th>
                     <th scope="col">Actions</th>
+                
                 </tr>
             </thead>
             <tbody>
@@ -59,6 +62,8 @@
                         <td>@bookProduct.Dimensions</td>
                         <td>@bookProduct.Weight</td>
                         <td>@bookProduct.Edition</td>
+                        <td>@bookProduct.AgeLimitation</td>
+                        <td>@(bookProduct.IsOnSell.HasValue ? (bookProduct.IsOnSell.Value ? "Yes" : "No") : "N/A")</td>
                         <td>
                             <a href="@Url.Action("Edit_Book_Product", new { id = bookProduct.BookId })" class="btn btn-primary">Edit</a>
                             <form method="post" action="@Url.Action("Delete_Book_Product", new { id = bookProduct.BookId })" style="display:inline">

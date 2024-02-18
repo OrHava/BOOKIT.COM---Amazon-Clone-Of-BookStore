@@ -136,6 +136,8 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                         existingBookProduct.Dimensions = updatedBookProduct.Dimensions;
                         existingBookProduct.Weight = updatedBookProduct.Weight;
                         existingBookProduct.Edition = updatedBookProduct.Edition;
+                        existingBookProduct.IsOnSell = updatedBookProduct.IsOnSell;
+                        existingBookProduct.AgeLimitation = updatedBookProduct.AgeLimitation;
 
                         if (image != null && !string.IsNullOrEmpty(atoken))
                         {

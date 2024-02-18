@@ -178,6 +178,13 @@
                                             <option value="false">No</option>
                                         </select>
                                     </div>
+                                    <div class="col-md-6">
+                                        <label for="isOnSell" class="form-label">Is On Sale</label>
+                                        <select class="form-select" id="isOnSell" name="IsOnSell" asp-for="IsOnSell" required>
+                                            <option value="true">Yes</option>
+                                            <option value="false">No</option>
+                                        </select>
+                                    </div>
 
 
                                     <div class="col-md-6">
@@ -423,6 +430,12 @@
                                         <label for="numberOfAvailability" class="form-label">Number Of Availability</label>
                                         <input type="number" class="form-control" id="numberOfAvailability" name="NumberOfAvailability" asp-for="NumberOfAvailability" required>
                                     </div>
+
+                                    <div class="col-md-6">
+                                        <label for="ageLimitation" class="form-label">Age Limitation</label>
+                                        <input type="number" class="form-control" id="ageLimitation" name="AgeLimitation" asp-for="AgeLimitation" required>
+                                    </div>
+                                 
                                 </div>
 
 
@@ -477,6 +490,7 @@
                                         <label for="edition" class="form-label">Edition</label>
                                         <input type="text" class="form-control" id="edition" name="Edition" asp-for="Edition" required>
                                     </div>
+                                     
 
                                 </div>
                                 <div class="mb-3">

@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <Folder Include="Views\User\" />
-    <Folder Include="Views\ProductGallery\" />
   </ItemGroup>
 
 </Project>

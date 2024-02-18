@@ -24,11 +24,13 @@ namespace FirebaseLoginAuth.Models
         public string? Language { get; set; }
         public string? Genre { get; set; }
         public bool? IsBestseller { get; set; }
+        public bool? IsOnSell { get; set; }
         public string? Format { get; set; }
         public string? Country { get; set; } 
         public string? Dimensions { get; set; } 
         public string? Weight { get; set; }
         public string? Edition { get; set; }
+        public int? AgeLimitation { get; set; }
         public string? ImageUrl { get; set; }
 
         public BookProduct()
@@ -37,7 +39,7 @@ namespace FirebaseLoginAuth.Models
         }
 
         // Constructor with parameters
-        public BookProduct(string name, string author, string publisher, DateTime releaseDate,int numberOfAvailability, decimal price, string isbn, string description, int pages, string language, string genre, bool isBestseller, string format, string country, string dimensions, string weight, string edition)
+        public BookProduct(bool isOnSell,int ageLimitation,string name, string author, string publisher, DateTime releaseDate,int numberOfAvailability, decimal price, string isbn, string description, int pages, string language, string genre, bool isBestseller, string format, string country, string dimensions, string weight, string edition)
         {
             // Generate a random 6-digit number
             Random rand = new Random();
@@ -46,13 +48,15 @@ namespace FirebaseLoginAuth.Models
 
             // Get the current timestamp
             DateTime currentTime = DateTime.Now;
-
+       
             // Combine the random number and current timestamp to form the ID
             string timestamp = currentTime.ToString("yyyyMMddHHmmss");
             string combinedId = timestamp + randomNumber.ToString();
 
             // Parse the combined ID to an integer
+            IsOnSell = isOnSell;
             BookId = combinedId;
+            AgeLimitation = ageLimitation;
             Name = name;
             Author = author;
             Publisher = publisher;

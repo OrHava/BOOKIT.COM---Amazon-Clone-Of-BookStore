@@ -163,13 +163,16 @@ namespace FirebaseLoginAuth.Controllers
                             && bookProduct.Dimensions != null &&
                         bookProduct.Weight != null
                             && bookProduct.Edition != null
-                    
+                               && bookProduct.AgeLimitation != null
+                                 && bookProduct.IsOnSell != null
+
                         )
                     {
                         // Initialize a new instance of BookProduct
                         BookProduct newBookProduct = new BookProduct(
                      
                             name: bookProduct.Name,
+                            isOnSell: (bool)bookProduct.IsOnSell,
                             author: bookProduct.Author,
                             publisher: bookProduct.Publisher,
                             releaseDate: (DateTime)bookProduct.ReleaseDate,
@@ -185,7 +188,8 @@ namespace FirebaseLoginAuth.Controllers
                             country: bookProduct.Country,
                             dimensions: bookProduct.Dimensions,
                             weight: bookProduct.Weight,
-                            edition: bookProduct.Edition
+                            edition: bookProduct.Edition,
+                              ageLimitation: (int)bookProduct.AgeLimitation
                         );
                         var token = HttpContext.Session.GetString("_UserToken");
                         if (image != null && image.Length > 0 && token!=null)
