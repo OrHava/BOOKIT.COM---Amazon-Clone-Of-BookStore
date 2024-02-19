@@ -103,6 +103,39 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return null;
             }
         }
+
+        public static async Task<bool> UpdateBookProductAvailability(string adminId, string bookId, int newAvailability)
+        {
+            try
+            {
+                // Construct the path to the book product node in your database
+                string path = $"users/{adminId}/Products/{bookId}";
+                string path2 = $"Products/{bookId}";
+
+                // Retrieve the existing book product from the database
+                var existingBookProduct = await GetBookProductById(adminId, bookId);
+                if (existingBookProduct != null)
+                {
+                    // Update the existing book product's NumberOfAvailability property
+                    existingBookProduct.NumberOfAvailability += newAvailability;
+
+                    // Save the updated book product back to the database
+                    await firebase.Child(path).PutAsync(existingBookProduct);
+                    await firebase.Child(path2).PutAsync(existingBookProduct);
+                    return true; // Update successful
+                }
+                else
+                {
+                    return false; // Book product not found
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating book product availability: {ex.Message}");
+                return false; // Update failed
+            }
+        }
+
         public static async Task<bool> UpdateBookProduct(BookProduct updatedBookProduct, IFormFile image, string atoken)
         {
             try

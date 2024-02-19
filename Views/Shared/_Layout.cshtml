@@ -1,6 +1,16 @@
 ﻿@using Microsoft.AspNetCore.Http
 @inject IHttpContextAccessor HttpContextAccessor
+@{
+    var httpContext = HttpContextAccessor.HttpContext;
+    var hideFooter = false;
 
+    // Check if the current page is SignIn, Registration, or ForgotPassword
+    var currentPage = httpContext.Request.Path;
+    if (currentPage == "/Home/SignIn" || currentPage == "/Home/Registration" || currentPage == "/Home/ForgotPassword")
+    {
+        hideFooter = true;
+    }
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,6 +23,27 @@
 
 
 </head>
+
+<style>
+    /* Footer Styles */
+    footer {
+        background-color: #2c3e50;
+        color: #ffffff;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        margin-top: 100px;
+        position: absolute;
+        width: 100%;
+    }
+
+    .container-footer {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+</style>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background: linear-gradient(to top right, #CCE5FF, #99CCFF, #66B2FF, #3399FF, #0077FF, #0055CC);">
@@ -43,11 +74,6 @@
                             }
                         </li>
                       
-                    
-
-
-                   
-
 
                         <li class="nav-item">
                             @{
@@ -95,6 +121,16 @@
                             }
                         </li>
 
+                        <li class="nav-item">
+                            @{
+
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Payment" asp-action="Index">Payment</a>
+
+
+                                
+                            }
+                        </li>
+
                     
                     </ul>
                 </div>
@@ -106,6 +142,24 @@
             @RenderBody()
         </main>
     </div>
+
+    @if (!hideFooter)
+    {
+        <footer class="mt-5">
+            <div class="container container-footer">
+                <div class="text-center">
+                    <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=508088&ref_=footer_cou" style="color: #ffffff; font-size: 12px;">Terms and Conditions</a>
+                </div>
+                <div class="text-center">
+                    <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=508088&ref_=footer_cou" style="color: #ffffff; font-size: 12px;">Privacy Policy</a>
+                </div>
+                <div class="text-center">
+                    <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=508088&ref_=footer_cou" style="color: #ffffff; font-size: 12px;">Ad Choices</a>
+                </div>
+            </div>
+        </footer>
+    }
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

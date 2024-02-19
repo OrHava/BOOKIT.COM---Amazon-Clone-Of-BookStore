@@ -135,6 +135,54 @@ namespace FirebaseLoginAuth.Controllers
             }
         }
 
+        public async Task<IActionResult> SearchBooks(string searchString)
+        {
+            var userAuthId = HttpContext.Session.GetString("_UserId");
+
+            if (!string.IsNullOrEmpty(userAuthId))
+            {
+                // Perform the search in FirebaseHelper based on the search input
+                var searchResults = await FirebaseHelper.SearchBookProducts(searchString);
+
+
+                return View("BookProductsList", searchResults);
+            }
+            else
+            {
+                return RedirectToAction("Add_Remove_Product_Admin");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Add_Book_Product(string id, int amount)
+        {
+            var userAuthId = HttpContext.Session.GetString("_UserId");
+
+            if (!string.IsNullOrEmpty(userAuthId))
+            {
+                // Update the availability of the book product identified by 'id'
+                bool updated = await FirebaseHelper.UpdateBookProductAvailability(userAuthId, id, amount);
+                var bookProducts = await FirebaseHelper.GetAllBookedAdminBookProducts(userAuthId);
+                // Optionally, you can handle the result of the update operation
+                if (updated)
+                {
+                    // Redirect to the appropriate action or view after updating the availability
+                 
+                    return View("BookProductsList", bookProducts);
+                }
+                else
+                {
+                    // Handle the case where the update failed
+                    return RedirectToAction("BookProductsList", bookProducts); // Redirect back to the same view
+                }
+            }
+            else
+            {
+                return RedirectToAction("Add_Remove_Product_Admin");
+            }
+        }
+
+
 
         [HttpPost]
         public async Task<IActionResult> SaveBookProductOrder(BookProduct bookProduct, IFormFile image)
