@@ -126,17 +126,7 @@
         }
 
 </style>
-<div class="container">
-    <div class="row">
-       
-        @if (TempData.ContainsKey("UserEmail"))
-        {
-            <h4 class="welcome-text">Welcome @TempData["UserEmail"]!</h4>
-        }
 
-     
-    </div>
-</div>
 
 @if (TempData["SuccessMessage"] != null)
 {
@@ -216,9 +206,9 @@
                         <!-- Adjust the column width and add padding for spacing -->
                     @foreach (var book in Model.BestSellersScienceFiction)
                         {
-                            <div class="card" style="width: 120px; display: inline-block; margin-right: 10px;">
+                            <div class="card" style="width: 150px; display: inline-block; margin-right: 10px;">
                             <a href="@Url.Action("ItemSalePage", "ProductGallery", new { bookId = book.BookId })">
-                                <img src="@book.ImageUrl" class="card-img-top img-thumbnail" alt="Book Image" style="max-width: 100%; max-height: 150px;">
+                                <img src="@book.ImageUrl" class="card-img-top img-thumbnail" alt="Book Image" style="max-width: 100%; max-height: 200px;">
                             </a>
 
                             </div>
@@ -246,10 +236,10 @@
                         <!-- Adjust the column width and add padding for spacing -->
                         @foreach (var book in Model.BestSellersFantasy)
                         {
-                        <div class="card" style="width: 120px; display: inline-block; margin-right: 10px;">
+                        <div class="card" style="width: 150px; display: inline-block; margin-right: 10px;">
                             <a href="@Url.Action("ItemSalePage", "ProductGallery", new { bookId = book.BookId })">
 
-                                <img src="@book.ImageUrl" class="card-img-top img-thumbnail" alt="Book Image" style="max-width: 100%; max-height: 150px;">
+                                <img src="@book.ImageUrl" class="card-img-top img-thumbnail" alt="Book Image" style="max-width: 100%; max-height: 200px;">
                             </a>
 
                         </div>

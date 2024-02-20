@@ -13,16 +13,15 @@ namespace FirebaseLoginAuth.Controllers
 
         public async Task<IActionResult> ItemSalePage(string bookId)
         {
-            var userAuthId = HttpContext.Session.GetString("_UserId");
+     
 
-            if (!string.IsNullOrEmpty(userAuthId))
-            {
-                var bookProduct = await FirebaseHelper.GetBookProductById(userAuthId, bookId);
+           
+                var bookProduct = await FirebaseHelper.GetBookProductById( bookId);
                 if (bookProduct != null)
                 {
                     return View(bookProduct);
                 }
-            }
+         
 
             // If userAuthId is null or empty, or if bookProduct is null,
             // or if there's any other condition where you don't return a View,

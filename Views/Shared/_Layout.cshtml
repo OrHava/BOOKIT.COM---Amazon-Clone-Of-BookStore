@@ -43,6 +43,76 @@
         align-items: center;
     }
 
+     /* Sidebar Styles */
+     /* Move the sidebar to the left of the page */
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: white;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+        .sidebar ul {
+            list-style-type: none; /* Remove bullets from list items */
+            padding: 0; /* Remove default padding */
+            margin: 0; /* Remove default margin */
+        }
+
+/* Style for the close button */
+.closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+/* Style for sidebar links */
+.sidebar a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+/* Change color of links on hover */
+.sidebar a:hover {
+    color: #f1f1f1;
+}
+
+/* Open the sidebar when the button is clicked */
+.openbtn {
+    font-size: 20px;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+}
+
+/* Position the content to the right of the sidebar */
+#main {
+    transition: margin-left .5s;
+    padding: 16px;
+    margin-left: 0;
+}
+
+/* Add media query for smaller screens */
+@@media screen and (max-height: 450px) {
+    .sidebar {
+        padding-top: 15px;
+    }
+    .sidebar a {
+        font-size: 18px;
+    }
+}
+
 </style>
 <body>
     <header>
@@ -121,15 +191,7 @@
                             }
                         </li>
 
-                        <li class="nav-item">
-                            @{
-
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Payment" asp-action="Index">Payment</a>
-
-
-                                
-                            }
-                        </li>
+                     
 
                     
                     </ul>
@@ -137,6 +199,46 @@
             </div>
         </nav>
     </header>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="mySidebar">
+        <!-- Add a close button inside the sidebar -->
+        <button class="closebtn" onclick="closeNav()">
+            <span style="color: black;">&times;</span>
+        </button>
+
+        <!-- Add your sidebar links -->
+        <ul style="list-style-type: none; padding: 0; margin: 0;">
+            <!-- Apply styles to remove bullets -->
+            <li class="nav-item">
+                @{
+                    <a class="nav-link" style="color: black; font-size: 16px;" asp-area="" asp-controller="Home" asp-action="Registration">Registration<span style="margin-left: 5px;">&gt;</span></a>
+                }
+            </li>
+
+            <li class="nav-item">
+                @{
+                    <a class="nav-link" style="color: black; font-size: 16px;" asp-area="" asp-controller="Home" asp-action="SignIn">Sign In<span style="margin-left: 5px;">&gt;</span></a>
+                }
+            </li>
+
+            <li class="nav-item">
+                @{
+                    <a class="nav-link" style="color: black; font-size: 16px;" asp-area="" asp-controller="Payment" asp-action="Index">Payment<span style="margin-left: 5px;">&gt;</span></a>
+                }
+            </li>
+        </ul>
+    </div>
+
+
+
+    <!-- Page Content -->
+    <div id="main">
+        <button class="openbtn" onclick="openNav()">&#9776; All</button>
+        <!-- Your existing content goes here -->
+    </div>
+
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -159,6 +261,18 @@
             </div>
         </footer>
     }
+
+    <script>
+        function openNav() {
+            document.getElementById("mySidebar").style.width = "250px";
+            document.getElementById("main").style.marginLeft = "250px";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidebar").style.width = "0";
+            document.getElementById("main").style.marginLeft = "0";
+        }
+    </script>
 
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

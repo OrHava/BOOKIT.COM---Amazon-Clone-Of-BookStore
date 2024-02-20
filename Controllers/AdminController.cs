@@ -39,7 +39,7 @@ namespace FirebaseLoginAuth.Controllers
 
             if (!string.IsNullOrEmpty(userAuthId))
             {
-                var bookProduct = await FirebaseHelper.GetBookProductById(userAuthId, id);
+                var bookProduct = await FirebaseHelper.GetBookProductById( id);
                 if (bookProduct != null)
                 {
                      // Ensure that the ReleaseDate is properly formatted to display only the date part

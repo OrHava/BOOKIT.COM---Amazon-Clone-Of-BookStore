@@ -27,11 +27,9 @@ namespace FirebaseLoginAuth.Controllers
         // Controller action
         public async Task<IActionResult> Index()
         {
-            var token = HttpContext.Session.GetString("_UserToken");
-
-            if (!string.IsNullOrEmpty(token) || (Request.Cookies.ContainsKey("UserEmail") && Request.Cookies.ContainsKey("UserPassword")))
-            {
-                var userEmail = HttpContext.Session.GetString("_UserEmail");
+           
+           
+          
 
                 // Get best selling books for fantasy and science fiction
                 var bestSellersFantasy = await FirebaseHelper.GetBestSellingBooksByGenre("Fantasy");
@@ -44,23 +42,19 @@ namespace FirebaseLoginAuth.Controllers
                     BestSellersScienceFiction = bestSellersScienceFiction
                 };
 
-                ViewData["UserEmail"] = userEmail;
+           
+    
                 return View(viewModel); // Pass the view model to the view
-            }
-            else
-            {
-                TempData["ErrorMessage"] = null;
-                return RedirectToAction("SignIn");
-            }
+           
+            
         }
 
 
         public async Task<IActionResult> SearchBooks(string searchInput)
         {
-            var userAuthId = HttpContext.Session.GetString("_UserId");
+    
 
-            if (!string.IsNullOrEmpty(userAuthId))
-            {
+          
                 // Perform the search in FirebaseHelper based on the search input
                 var searchResults = await FirebaseHelper.SearchBookProducts(searchInput);
                 // Get best selling books for fantasy and science fiction
@@ -78,11 +72,8 @@ namespace FirebaseLoginAuth.Controllers
                 };
 
                 return View("Index", viewModel);
-            }
-            else
-            {
-                return RedirectToAction("Add_Remove_Product_Admin");
-            }
+         
+           
         }
 
 

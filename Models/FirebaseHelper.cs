@@ -86,7 +86,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return false;
             }
         }
-        public static async Task<BookProduct?> GetBookProductById(string uid, string productId)
+        public static async Task<BookProduct?> GetBookProductById( string productId)
         {
             try
             {
@@ -113,7 +113,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 string path2 = $"Products/{bookId}";
 
                 // Retrieve the existing book product from the database
-                var existingBookProduct = await GetBookProductById(adminId, bookId);
+                var existingBookProduct = await GetBookProductById( bookId);
                 if (existingBookProduct != null)
                 {
                     // Update the existing book product's NumberOfAvailability property
@@ -148,7 +148,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 // Retrieve the existing book product from the database
                 if (updatedBookProduct.AdminId != null && updatedBookProduct.BookId != null)
                 {
-                    var existingBookProduct = await GetBookProductById(updatedBookProduct.AdminId, updatedBookProduct.BookId);
+                    var existingBookProduct = await GetBookProductById( updatedBookProduct.BookId);
                     if (existingBookProduct != null)
                     {
                         // Update the existing book product with the new data
