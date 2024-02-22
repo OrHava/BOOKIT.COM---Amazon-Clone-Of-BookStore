@@ -20,6 +20,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FirebaseLoginAuth.styles.css" asp-append-version="true" />
+    <!-- Include Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 
 </head>
@@ -49,7 +51,7 @@
     height: 100%;
     width: 0;
     position: fixed;
-    z-index: 1;
+    z-index: 10;
     top: 0;
     left: 0;
     background-color: white;
@@ -78,7 +80,7 @@
     padding: 10px 15px;
     text-decoration: none;
     font-size: 25px;
-    color: #818181;
+    color: white;
     display: block;
     transition: 0.3s;
 }
@@ -96,12 +98,75 @@
     background-color: transparent;
 }
 
+    /* Style the search button */
+    .search-button {
+        background-color: orange; /* Orange background color */
+        border: none;
+
+        color: black;
+        padding: 8px 15px;
+        border-radius: 0 4px 4px 0;
+        cursor: pointer;
+    }
+
+        .search-button:hover {
+            background-color: #e67300; /* Darker shade of orange on hover */
+        }
+
+        /* Style the search icon */
+        .search-button i {
+            font-size: 18px;
+        }
 /* Position the content to the right of the sidebar */
 #main {
     transition: margin-left .5s;
     padding: 16px;
     margin-left: 0;
 }
+
+   
+
+    .search-input {
+        height: 50px; /* Increase input height */
+        border-radius: 8px; /* Add rounded corners to inputs */
+        border: 1px solid #ccc; /* Add a border for better visibility */
+    }
+
+    .search-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: rgba(19, 25, 33, 1);
+        padding: 10px;
+    }
+
+    .website-name {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .cart-icon {
+        display: flex;
+        align-items: center;
+        color: white;
+        font-size: 20px;
+    }
+
+    .navbar {
+        padding-top: 0.5rem; /* Adjust the top padding */
+        padding-bottom: 0.5rem; /* Adjust the bottom padding */
+        line-height: 0.1; /* Adjust the line height */
+    }
+
+    .search-form {
+        width: 60%; /* Adjust as needed */
+    }
+
+    .cart-count {
+        margin-left: 5px;
+    }
+
+
 
 /* Add media query for smaller screens */
 @@media screen and (max-height: 450px) {
@@ -115,10 +180,39 @@
 
 </style>
 <body>
+
+    <div class="search-container">
+        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index" style="color: white; font-family: 'Arial Black', sans-serif; font-size: 24px; text-decoration: none;"> BookIt.com</a>
+
+        <form asp-controller="ProductGallery" asp-action="SearchBooks" method="post" class="search-form">
+            <div class="row">
+                <div class="col-md-10">
+                    <input type="text" class="form-control search-input" id="searchInput" name="searchInput" placeholder="Search for books">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="search-button">
+                        <i class="fas fa-search"></i> <!-- Font Awesome search icon -->
+                    </button>
+                </div>
+            </div>
+
+        </form>
+        <div class="cart-icon">
+            <i class="fa fa-shopping-cart"></i>
+            <span class="cart-count">0</span>
+        </div>
+    </div>
+
+  
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background: linear-gradient(to top right, #CCE5FF, #99CCFF, #66B2FF, #3399FF, #0077FF, #0055CC);">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3" style="background: rgba(35,47,62,255);">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BookIt.Com</a>
+                <!-- Page Content -->
+                <div id="main">
+                    <button style="color: white; font-weight: bold;" class="openbtn" onclick="openNav()">&#9776;  All</button>
+                    <!-- Your existing content goes here -->
+                </div>
+              
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -128,19 +222,8 @@
                        
                         <li class="nav-item">
                             @{
-                                var httpContext = HttpContextAccessor.HttpContext;
-                                if (httpContext != null)
-                                {
-                                    var userToken = httpContext.Session.GetString("_UserToken");
 
-
-                                    if (!string.IsNullOrEmpty(userToken))
-                                    {
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-
-
-                                    }
-                                }
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" style="color: white; font-weight: bold;">Home</a>
                             }
                         </li>
                       
@@ -155,7 +238,7 @@
 
                                     if (!string.IsNullOrEmpty(userToken) && userType == "Admin")
                                     {
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Add_Remove_Product_Admin">Add Book Product</a>
+                                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Add_Remove_Product_Admin" style="color: white; font-weight: bold;">Add Book Product</a>
                                     }
                                 }
                             }
@@ -170,7 +253,7 @@
 
                                     if (!string.IsNullOrEmpty(userToken) && userType == "Admin")
                                     {
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="GetBooksProducts">See Book Product</a>
+                                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="GetBooksProducts" style="color: white; font-weight: bold;">See Book Product</a>
                                     }
                                 }
                             }
@@ -185,7 +268,7 @@
 
                                     if (!string.IsNullOrEmpty(userToken) )
                                     {
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="LogOut">Logout</a>
+                                        <a class="nav-link " asp-area="" asp-controller="Home" asp-action="LogOut" style="color: white; font-weight: bold;">Logout</a>
                                     }
                                 }
                             }
@@ -232,11 +315,7 @@
 
 
 
-    <!-- Page Content -->
-    <div id="main">
-        <button class="openbtn" onclick="openNav()">&#9776; All</button>
-        <!-- Your existing content goes here -->
-    </div>
+ 
 
 
     <div class="container">

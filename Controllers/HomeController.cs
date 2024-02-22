@@ -27,24 +27,26 @@ namespace FirebaseLoginAuth.Controllers
         // Controller action
         public async Task<IActionResult> Index()
         {
-           
-           
+
+
           
 
-                // Get best selling books for fantasy and science fiction
-                var bestSellersFantasy = await FirebaseHelper.GetBestSellingBooksByGenre("Fantasy");
+            // Get best selling books for fantasy and science fiction
+            var bestSellersFantasy = await FirebaseHelper.GetBestSellingBooksByGenre("Fantasy");
                 var bestSellersScienceFiction = await FirebaseHelper.GetBestSellingBooksByGenre("Science Fiction");
 
-                // Populate the view model
-                var viewModel = new HomeViewModel
-                {
-                    BestSellersFantasy = bestSellersFantasy,
-                    BestSellersScienceFiction = bestSellersScienceFiction
-                };
+            // Populate the view model
+            var viewModel = new HomeViewModel
+            {
+                BestSellersFantasy = bestSellersFantasy,
+                BestSellersScienceFiction = bestSellersScienceFiction,
+             
+  
+            };
 
-           
-    
-                return View(viewModel); // Pass the view model to the view
+
+
+            return View(viewModel); // Pass the view model to the view
            
             
         }

@@ -58,26 +58,32 @@
                             <strong>Is On Sell:</strong> @(bookProduct.IsOnSell.HasValue ? (bookProduct.IsOnSell.Value ? "Yes" : "No") : "N/A")<br />
                         </td>
                         <td>
-                            <!-- Edit Button -->
-                            <a href="@Url.Action("Edit_Book_Product", new { id = bookProduct.BookId })" class="btn btn-primary btn-sm">
-                                <i class="fas fa-edit mr-1"></i> Edit
-                            </a>
-
-                            <!-- Delete Button -->
-                            <form method="post" action="@Url.Action("Delete_Book_Product", new { id = bookProduct.BookId })" class="d-inline">
-                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this product?')">
-                                    <i class="fas fa-trash-alt mr-1"></i> Delete
-                                </button>
-                            </form>
-
+                            <div class="btn-group" role="group" aria-label="Book Actions">
+                                <!-- Edit Button -->
+                                <a href="@Url.Action("Edit_Book_Product", new { id = bookProduct.BookId })" class="btn btn-primary">
+                                    <i class="fas fa-edit mr-1"></i> Edit
+                                </a>
+                                <!-- Delete Button -->
+                                <form method="post" action="@Url.Action("Delete_Book_Product", new { id = bookProduct.BookId })" class="d-inline">
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this product?')">
+                                        <i class="fas fa-trash-alt mr-1"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
                             <!-- Add Form -->
                             <form method="post" action="@Url.Action("Add_Book_Product", new { id = bookProduct.BookId })" class="mt-2">
-                                <div class="input-group">
-                                    <input type="number" class="form-control form-control-sm" name="amount" placeholder="Amount" min="1" required style="max-width: 100px; margin-right: 10px;">
-                                    <div class="input-group-append">
-                                        <button type="submit" class="btn btn-success btn-sm">
-                                            <i class="fas fa-plus"></i> Add
-                                        </button>
+                                <div class="column">
+                                    <div class="col-md-12">
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" name="amount" min="1" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-success btn-block">
+                                                <i class="fas fa-plus"></i> Add
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
@@ -85,8 +91,6 @@
 
 
                         </td>
-
-
                     </tr>
                 }
             </tbody>

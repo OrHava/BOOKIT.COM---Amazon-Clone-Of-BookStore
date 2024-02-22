@@ -27,103 +27,110 @@
 
 
 
+
 </head>
 
 <style>
     body {
         background-color: rgba(227, 230, 230, 1);
         font-family: Arial, sans-serif;
-    }
-    .welcome-text {
-        font-size: 1rem; /* Adjust the font size of the welcome text */
-        margin-top: 0.5rem; /* Add some top margin for spacing */
-    }
 
-    .avatar-icon {
-        width: 30px; /* Adjust the width of the avatar icon */
-        height: auto; /* Maintain aspect ratio */
-        margin-left: 10px; /* Add some left margin for spacing */
     }
-
-    .logout-icon {
-        width: 24px; /* Adjust the width of the logout icon */
-        height: auto; /* Maintain aspect ratio */
-    }
-
+  
     .text-right {
-        text-align: right; /* Align the text and icons to the right */
+        text-align: right; 
     }
 
-    .logout-link {
-        color: #333; /* Ensure the color of the logout link is visible */
-        text-decoration: none; /* Remove default underline from the link */
-        margin-right: 10px; /* Add right margin to the logout link */
-    }
+   
 
-        .logout-link:hover {
-            color: #555; /* Change color on hover for better visibility */
-        }
 
-    /* Adjust padding and margin for the row */
+ 
     .row {
         margin-left: -5px;
         margin-right: -5px;
     }
 
 
-  
 
-    .search-row {
-        background: rgba(255, 255, 255, 0.3);
-        padding: 20px; /* Add padding for spacing */
-        border-radius: 10px; /* Add some rounded corners */
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    .modern-card-container {
+        background-color: rgba(255, 255, 255, 0.8);
+        max-width: 110%;
+        background-image: url("https://images.unsplash.com/photo-1624555130581-1d9cca783bc0?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+        background-size: cover;
+        background-repeat: no-repeat;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        padding: 20px;
+        margin-right: -60px;
+        margin-left: -60px;
+        position: relative; 
+        z-index: 1; 
+        pointer-events: auto;
     }
 
-    .search-input {
-        height: 50px; /* Increase input height */
-        border-radius: 8px; /* Add rounded corners to inputs */
-        border: 1px solid #ccc; /* Add a border for better visibility */
+    .modern-card3 {
+        background-color: rgba(255, 255, 255, 2);
+        margin-bottom: 20px;
+        margin-top:200px;
     }
 
+    .modern-card2 {
+        background-color: rgba(255, 255, 255, 2);
+        margin-bottom: 20px;
+
+    }
     .modern-card {
         background-color: rgba(255, 255, 255, 2);
         margin-bottom: 20px;
+        margin-right: -60px;
+        margin-left: -60px;
+
     }
 
-    .modern-input {
-        height: 50px;
- 
-        border-radius: 8px;
-        border: 1px solid #ced4da;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        line-height: normal;
-        color: #495057;
-        background-color: #fff;
-        background-clip: padding-box;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    .arrow-icon {
+        position: absolute;
+        top: 20px;
+        font-size: 56px;
+        cursor: pointer;
+        z-index: 2;
     }
 
-        .modern-input:focus {
-            border-color: #80bdff;
-            outline: 0;
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    .arrow-icon-left {
+        left: 20px;
+    }
+
+    .arrow-icon-right {
+        right: 20px;
+    }
+
+    .arrow-click-zone {
+        position: absolute;
+        width: 100px; 
+        height: 100%; 
+        top: 0;
+        cursor: pointer;
+    }
+
+    .center-button {
+        position: absolute;
+        top: 20px; 
+        left: 50%;
+        transform: translateX(-50%);
+        width: 500px; 
+        height: 140px; 
+        opacity: 0;
+        cursor: pointer;
+        z-index: 3;
+    }
+
+    .specific-container {
+        overflow-x: hidden;
+    }
+
+        .specific-container.hovered {
+            overflow-x: auto;
         }
 
-
-    .search-button {
-        border-radius: 8px; /* Add rounded corners to button */
-        height: 50px; /* Increase button height */
-        padding: 0 30px; /* Add padding for button text */
-        font-size: 18px; /* Increase font size */
-    }
-
-        /* Hover effect for button */
-        .search-button:hover {
-            background-color: #1e90ff; /* Change background color on hover */
-            border-color: #1e90ff; /* Change border color on hover */
-        }
 
 </style>
 
@@ -142,74 +149,24 @@
         @TempData["ErrorMessage"]
     </div>
 }
-<div class="container mt-4">
-    <form asp-action="SearchBooks" method="post">
-        <div class="row search-row">
-            <div class="col-md-4">
-                <input type="text" class="form-control search-input" id="searchInput" name="searchInput" placeholder="Search for books">
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary search-button">Search</button>
-            </div>
-        </div>
-    </form>
-</div>
-
-<div class="container mt-4">
-    <h3>Books Found</h3>
-    @if (Model.SearchResults != null && Model.SearchResults.Any())
-    {
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Book Title</th>
-                    <th>Author</th>
-                    <th>Release Date</th>
-                  
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var book in Model.SearchResults)
-                {
-                    <tr>
-                        <td>@book.Name</td>
-                        <td>@book.Author</td>
-                        <td>@(book.ReleaseDate.HasValue ? book.ReleaseDate.Value.ToString("yyyy-MM-dd") : "N/A")</td>
-                     
-                        <td>
-                            <a class="btn btn-primary" href="#">View Details</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p>No books found.</p>
-    }
-</div>
-
-
-
-
-
-<div class="modern-card">
-    <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Science Fiction</h2>
-        <div class="container" style="overflow-x: auto;">
+<div class="modern-card-container">
+    <div class="arrow-icon arrow-icon-left">&lt;</div>
+    <div class="arrow-icon arrow-icon-right">&gt;</div>
+    <button class="center-button"></button>
+    <div class="modern-card3">
+        <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Science Fiction</h2>
+        <div class="container specific-container">
             <div class="row" style="white-space: nowrap;">
-                <!-- Ensure horizontal scrolling with nowrap -->
-            @if (Model.BestSellersScienceFiction != null && Model.BestSellersScienceFiction.Any())
+            
+                @if (Model.BestSellersScienceFiction != null && Model.BestSellersScienceFiction.Any())
                 {
                     <div class="col-md-12" style="padding-right: 5px; display: inline-block;">
-                        <!-- Adjust the column width and add padding for spacing -->
-                    @foreach (var book in Model.BestSellersScienceFiction)
+                        @foreach (var book in Model.BestSellersScienceFiction)
                         {
                             <div class="card" style="width: 150px; display: inline-block; margin-right: 10px;">
-                            <a href="@Url.Action("ItemSalePage", "ProductGallery", new { bookId = book.BookId })">
-                                <img src="@book.ImageUrl" class="card-img-top img-thumbnail" alt="Book Image" style="max-width: 100%; max-height: 200px;">
-                            </a>
+                                <a href="@Url.Action("ItemSalePage", "ProductGallery", new { bookId = book.BookId })">
+                                    <img src="@book.ImageUrl" class="card-img-top img-thumbnail" alt="Book Image" style="max-width: 100%; max-height: 200px;">
+                                </a>
 
                             </div>
                         }
@@ -225,24 +182,24 @@
 
 
 
-<div class="modern-card">
+    <div class="modern-card2">
         <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Fantasy</h2>
-        <div class="container" style="overflow-x: auto;">
+        <div class="container specific-container">
             <div class="row" style="white-space: nowrap;">
-                <!-- Ensure horizontal scrolling with nowrap -->
+            
                 @if (Model.BestSellersFantasy != null && Model.BestSellersFantasy.Any())
                 {
                     <div class="col-md-12" style="padding-right: 5px; display: inline-block;">
-                        <!-- Adjust the column width and add padding for spacing -->
+             
                         @foreach (var book in Model.BestSellersFantasy)
                         {
-                        <div class="card" style="width: 150px; display: inline-block; margin-right: 10px;">
-                            <a href="@Url.Action("ItemSalePage", "ProductGallery", new { bookId = book.BookId })">
+                            <div class="card" style="width: 150px; display: inline-block; margin-right: 10px;">
+                                <a href="@Url.Action("ItemSalePage", "ProductGallery", new { bookId = book.BookId })">
 
-                                <img src="@book.ImageUrl" class="card-img-top img-thumbnail" alt="Book Image" style="max-width: 100%; max-height: 200px;">
-                            </a>
+                                    <img src="@book.ImageUrl" class="card-img-top img-thumbnail" alt="Book Image" style="max-width: 100%; max-height: 200px;">
+                                </a>
 
-                        </div>
+                            </div>
                         }
                     </div>
                 }
@@ -253,17 +210,19 @@
             </div>
         </div>
     </div>
+</div>
+
 
 
 <div class="modern-card">
     <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Fantasy</h2>
-    <div class="container" style="overflow-x: auto;">
+    <div class="container specific-container">
         <div class="row" style="white-space: nowrap;">
-            <!-- Ensure horizontal scrolling with nowrap -->
+       
             @if (Model.BestSellersFantasy != null && Model.BestSellersFantasy.Any())
             {
                 <div class="col-md-12" style="padding-right: 5px; display: inline-block;">
-                    <!-- Adjust the column width and add padding for spacing -->
+              
                     @foreach (var book in Model.BestSellersFantasy)
                     {
                         <div class="card" style="width: 150px; display: inline-block; margin-right: 10px;">
@@ -287,13 +246,13 @@
 
 <div class="modern-card">
         <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Fantasy</h2>
-        <div class="container" style="overflow-x: auto;">
+    <div class="container specific-container">
             <div class="row" style="white-space: nowrap;">
-                <!-- Ensure horizontal scrolling with nowrap -->
+         
                 @if (Model.BestSellersFantasy != null && Model.BestSellersFantasy.Any())
                 {
                     <div class="col-md-12" style="padding-right: 5px; display: inline-block;">
-                        <!-- Adjust the column width and add padding for spacing -->
+                     
                         @foreach (var book in Model.BestSellersFantasy)
                         {
                         <div class="card" style="width: 150px; display: inline-block; margin-right: 10px;">
@@ -317,13 +276,13 @@
 
 <div class="modern-card">
         <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Fantasy</h2>
-        <div class="container" style="overflow-x: auto;">
+    <div class="container specific-container">
             <div class="row" style="white-space: nowrap;">
-                <!-- Ensure horizontal scrolling with nowrap -->
+
                 @if (Model.BestSellersFantasy != null && Model.BestSellersFantasy.Any())
                 {
                     <div class="col-md-12" style="padding-right: 5px; display: inline-block;">
-                        <!-- Adjust the column width and add padding for spacing -->
+     
                         @foreach (var book in Model.BestSellersFantasy)
                         {
                         <div class="card" style="width: 150px; display: inline-block; margin-right: 10px;">
@@ -347,13 +306,12 @@
 
 <div class="modern-card">
     <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Fantasy</h2>
-    <div class="container" style="overflow-x: auto;">
+    <div class="container specific-container">
         <div class="row" style="white-space: nowrap;">
-            <!-- Ensure horizontal scrolling with nowrap -->
+          
             @if (Model.BestSellersFantasy != null && Model.BestSellersFantasy.Any())
             {
                 <div class="col-md-12" style="padding-right: 5px; display: inline-block;">
-                    <!-- Adjust the column width and add padding for spacing -->
                     @foreach (var book in Model.BestSellersFantasy)
                     {
                         <div class="card" style="width: 150px; display: inline-block; margin-right: 10px;">
@@ -374,3 +332,83 @@
     </div>
 </div>
 
+
+<script>
+    $(document).ready(function () {
+        var images = [
+            "https://images.unsplash.com/photo-1505159940484-eb2b9f2588e2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.unsplash.com/photo-1578374173696-f8a2d504b144?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+         
+        ];
+        var currentIndex = 0;
+        var container = $(".modern-card-container");
+        var form1 = $('<form action="/ProductGallery/SearchBooksByGenre" method="post">' +
+            '<input type="hidden" name="searchInput" value="Fantasy">' +
+            '</form>');
+
+        var form2 = $('<form action="/ProductGallery/SearchBooksByGenre" method="post">' +
+            '<input type="hidden" name="searchInput" value="ScienceFiction">' +
+            '</form>');
+
+
+        // Preload Images
+        for (var i = 0; i < images.length; i++) {
+            $('<img/>')[0].src = images[i];
+        }
+
+        // Function to change background image
+        function changeBackground() {
+            container.css("background-image", "url('" + images[currentIndex] + "')");
+        }
+
+        // Initialize background image
+        changeBackground();
+
+        // Handle click on left arrow
+        $(".arrow-icon-left").click(function () {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            changeBackground();
+        });
+
+        // Handle click on right arrow
+        $(".arrow-icon-right").click(function () {
+            currentIndex = (currentIndex + 1) % images.length;
+            changeBackground();
+        });
+
+        // Handle click on center button
+        $(".center-button").click(function () {
+            // Navigate to the search page when clicking on the center button
+            if (currentIndex === 0) {
+                $('body').append(form1);
+                form1.submit();
+            }
+            if (currentIndex === 1) {
+                $('body').append(form2);
+                form2.submit();
+            }
+        });
+        $(".center-button").hover(function () {
+            var title = "";
+            if (currentIndex === 0) {
+                title = "Fantasy";
+            } else if (currentIndex === 1) {
+                title = "Science Fiction";
+            }
+            $(this).attr("title", title);
+        });
+
+    });
+
+
+    $(document).ready(function () {
+        $(".specific-container").hover(
+            function () {
+                $(this).addClass("hovered");
+            },
+            function () {
+                $(this).removeClass("hovered");
+            }
+        );
+    });
+</script>
