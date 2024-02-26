@@ -1,0 +1,39 @@
+﻿@model List<FirebaseLoginAuth.Models.BookProduct>
+
+<h2>Your Shopping Cart</h2>
+
+@if (Model != null && Model.Count > 0)
+{
+    <table class="cart-table">
+        <tr>
+            <th>Book Title</th>
+            <th>Price</th>
+            <th>Action</th> <!-- New column for the remove button -->
+        </tr>
+        @foreach (var book in Model)
+        {
+            <tr>
+                <td>@book.Name</td>
+                <td>$@book.Price</td>
+                <td>
+                    <form method="post" asp-action="RemoveFromCart" asp-controller="User">
+                        <input type="hidden" name="bookId" value="@book.BookId" />
+                        <button type="submit" class="btn btn-danger">Remove</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="2" class="text-right">Total:</td>
+            <td>$@Model.Sum(book => book.Price)</td>
+        </tr>
+    </table>
+
+    <div class="cart-buttons">
+        <a href="@Url.Action("Index", "Home")" class="a-button continue-shopping-button">Continue Shopping</a>
+    </div>
+}
+else
+{
+    <p>Your cart is empty.</p>
+}

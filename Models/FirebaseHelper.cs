@@ -68,8 +68,74 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
             }
         }
 
+        public static async Task<bool> RemoveFromCart(string userId, string bookId)
+        {
+            try
+            {
+                // Construct the path to the book in the user's cart
+                string path = $"users/{userId}/Cart/{bookId}";
 
-     
+                // Remove the book from the user's cart
+                await firebase.Child(path).DeleteAsync();
+
+                return true; // Removal successful
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error removing item from cart: {ex.Message}");
+                return false; // Removal failed
+            }
+        }
+    
+    public static async Task<bool> AddItemToCart(string userId, BookProduct book)
+        {
+            try
+            {
+                // First, retrieve the user's current cart
+                var userCart = await firebase.Child("users").Child(userId).Child("cart").OnceSingleAsync<List<BookProduct>>();
+
+                // If the user's cart is null, create a new list
+                if (userCart == null)
+                {
+                    userCart = new List<BookProduct>();
+                }
+
+                // Add the new item to the cart
+                userCart.Add(book);
+
+                // Update the user's cart in the database
+                await firebase.Child("users").Child(userId).Child("cart").PutAsync(userCart);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding item to cart: {ex.Message}");
+                return false;
+            }
+        }
+        public static async Task<List<BookProduct>> GetItemsFromCart(string userId)
+        {
+            try
+            {
+                // Retrieve the user's cart from the database
+                var userCart = await firebase.Child("users").Child(userId).Child("cart").OnceSingleAsync<List<BookProduct>>();
+
+                // If the user's cart is null, return an empty list
+                if (userCart == null)
+                {
+                    return new List<BookProduct>();
+                }
+
+                return userCart;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving items from cart: {ex.Message}");
+                return new List<BookProduct>(); // Return an empty list on error
+            }
+        }
+
 
         public static async Task<bool> CreateBookProductData(BookProduct bookProduct,string uid )
         {

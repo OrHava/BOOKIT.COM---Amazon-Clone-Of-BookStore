@@ -1,6 +1,40 @@
 ﻿@model FirebaseLoginAuth.Models.BookProduct
+<style>
+    .a-button {
+        display: inline-block;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        transition: background-color 0.3s;
+        margin-right: 10px;
+    }
 
+    .add-to-cart {
+        background-color: rgba(255, 216, 20, 1); /* Yellow */
+        color: black;
+    }
+
+    .buy-now {
+        background-color: rgba(255, 164, 28, 1); /* Orange */
+        color: white;
+    }
+
+    .amazon-button:hover {
+        opacity: 0.8;
+    }
+</style>
 <h2>@Model.Name</h2>
 <p>Author: @Model.Author</p>
 <p>Description: @Model.Description</p>
 <p>Price: @Model.Price</p>
+<a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })">
+    <button class="a-button add-to-cart">Add to Cart</button>
+</a>
+
+
+<button  class="a-button buy-now">Buy Now</button>

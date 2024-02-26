@@ -18,8 +18,4 @@
     <PackageReference Include="PayPalCheckoutSdk" Version="1.0.4" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\User\" />
-  </ItemGroup>
-
 </Project>
