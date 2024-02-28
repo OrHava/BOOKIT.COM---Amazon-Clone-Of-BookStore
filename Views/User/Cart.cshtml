@@ -10,19 +10,20 @@
             <th>Price</th>
             <th>Action</th> <!-- New column for the remove button -->
         </tr>
-        @foreach (var book in Model)
+        @foreach (var book in Model.Select((value, index) => new { Value = value, Index = index }))
         {
             <tr>
-                <td>@book.Name</td>
-                <td>$@book.Price</td>
+                <td>@book.Value.Name</td>
+                <td>$@book.Value.Price</td>
                 <td>
                     <form method="post" asp-action="RemoveFromCart" asp-controller="User">
-                        <input type="hidden" name="bookId" value="@book.BookId" />
+                        <input type="hidden" name="index" value="@book.Index" />
                         <button type="submit" class="btn btn-danger">Remove</button>
                     </form>
                 </td>
             </tr>
         }
+
         <tr>
             <td colspan="2" class="text-right">Total:</td>
             <td>$@Model.Sum(book => book.Price)</td>

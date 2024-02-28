@@ -50,13 +50,15 @@ namespace FirebaseLoginAuth.Controllers
 
         }
         [HttpPost]
-        public async Task<IActionResult> RemoveFromCart(string bookId)
+        public async Task<IActionResult> RemoveFromCart(int index)
         {
             var userAuthId = HttpContext.Session.GetString("_UserId");
             if (userAuthId != null)
             {
                 // Remove the book from the user's cart in Firebase
-                await FirebaseHelper.RemoveFromCart(userAuthId, bookId);
+                await FirebaseHelper.RemoveFromCart(userAuthId, index);
+                var cartItems = await FirebaseHelper.GetItemsFromCart(userAuthId);
+                return RedirectToAction("Cart", cartItems);
             }
 
             return RedirectToAction("Cart");

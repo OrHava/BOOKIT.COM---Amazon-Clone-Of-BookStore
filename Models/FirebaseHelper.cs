@@ -68,15 +68,35 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
             }
         }
 
-        public static async Task<bool> RemoveFromCart(string userId, string bookId)
+        public static async Task<bool> RemoveFromCart(string userId, int index)
         {
             try
             {
-                // Construct the path to the book in the user's cart
-                string path = $"users/{userId}/Cart/{bookId}";
+                // Construct the path to the user's cart
+                string cartPath = $"users/{userId}/cart";
 
-                // Remove the book from the user's cart
-                await firebase.Child(path).DeleteAsync();
+                // Retrieve the user's current cart
+                var userCart = await firebase.Child(cartPath).OnceSingleAsync<List<BookProduct>>();
+
+                // If the user's cart is null or empty, return false
+                if (userCart == null || userCart.Count == 0)
+                {
+                    Console.WriteLine("Cart is empty.");
+                    return false;
+                }
+
+                // Check if the index is within the range of the cart
+                if (index < 0 || index >= userCart.Count)
+                {
+                    Console.WriteLine("Invalid index.");
+                    return false;
+                }
+
+                // Remove the item at the specified index
+                userCart.RemoveAt(index);
+
+                // Update the user's cart in the database
+                await firebase.Child(cartPath).PutAsync(userCart);
 
                 return true; // Removal successful
             }
@@ -86,8 +106,9 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return false; // Removal failed
             }
         }
-    
-    public static async Task<bool> AddItemToCart(string userId, BookProduct book)
+
+
+        public static async Task<bool> AddItemToCart(string userId, BookProduct book)
         {
             try
             {

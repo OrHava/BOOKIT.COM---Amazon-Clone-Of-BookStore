@@ -35,6 +35,6 @@
 <a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })">
     <button class="a-button add-to-cart">Add to Cart</button>
 </a>
-
-
-<button  class="a-button buy-now">Buy Now</button>
+<a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })">
+    <button class="a-button buy-now">Buy Now</button>
+</a>
