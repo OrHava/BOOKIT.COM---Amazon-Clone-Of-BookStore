@@ -108,8 +108,30 @@ namespace FirebaseLoginAuth.Controllers
 
         
         }
+        public async Task<IActionResult> ApplyFilters(string category, string sortBy, string releaseDate, string ageLimit, string priceRange, string format, bool onSale)
+        {
+            try
+            {
+                
+                var filteredProducts = await FirebaseHelper.ApplyFilters(category, sortBy, releaseDate, ageLimit, priceRange, format, onSale);
+          
+                var viewModel = new HomeViewModel
+                {
+                    SearchResults = filteredProducts
+                };
 
-       
+                return View("SearchPage", viewModel);
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions appropriately
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+
+
+
     }
 
 

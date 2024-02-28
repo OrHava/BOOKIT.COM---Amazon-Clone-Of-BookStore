@@ -5,6 +5,7 @@ using Firebase.Storage;
 using FirebaseLoginAuth.Models;
 using Google.Cloud.Storage.V1;
 using Humanizer.Localisation;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Configuration; // Added this using statement
@@ -313,6 +314,26 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return false; // Deletion failed
             }
         }
+        public static async Task<List<BookProduct>> GetAllProducts()
+        {
+            try
+            {
+                var productsSnapshot = await firebase.Child("Products").OnceAsync<BookProduct>();
+                List<BookProduct> allProducts = new List<BookProduct>();
+
+                foreach (var productSnapshot in productsSnapshot)
+                {
+                    allProducts.Add(productSnapshot.Object);
+                }
+
+                return allProducts;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving all products: {ex.Message}");
+                return new List<BookProduct>();
+            }
+        }
 
         public static async Task<List<BookProduct>> GetAllBookedAdminBookProducts(string uid)
         {
@@ -379,6 +400,50 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return new List<BookProduct>();
             }
         }
+        public static async Task<List<BookProduct>> ApplyFilters(string category, string sortBy, string releaseDate, string ageLimit, string priceRange, string format, bool onSale)
+        {
+            try
+            {
+                // Get all products initially
+                var allProducts = await FirebaseHelper.GetAllProducts();
+
+                // Apply filters based on the criteria
+                var filteredProducts = allProducts;
+
+                // Filter by category
+                if (!string.IsNullOrEmpty(category))
+                {
+                    filteredProducts = await FirebaseHelper.GetBestSellingBooksByGenre(category);
+                }
+
+                // Apply other filters as needed
+                // Add more if statements for other filter criteria
+
+                // Apply sorting
+                if (sortBy == "priceIncrease")
+                {
+                    filteredProducts = filteredProducts.OrderBy(p => p.Price).ToList();
+                }
+                else if (sortBy == "priceDecrease")
+                {
+                    filteredProducts = filteredProducts.OrderByDescending(p => p.Price).ToList();
+                }
+                else if (sortBy == "mostPopular")
+                {
+                    // Implement logic to sort by popularity
+                    // For example, based on the number of sales or ratings
+                }
+
+                // Return the filtered products as a JSON response
+                return filteredProducts;
+            }
+            catch (Exception ex)
+            {
+                return new List<BookProduct>();
+                // Handle exceptions appropriately
+            }
+        }
+
 
         public static async Task<string?> UploadImage(IFormFile image,String atoken)
         {

@@ -126,6 +126,72 @@
             background-color: #1e90ff; /* Change background color on hover */
             border-color: #1e90ff; /* Change border color on hover */
         }
+          /* Styling for the side slide container */
+        .side-slide-container {
+            position: fixed;
+            top: 0;
+            right: -300px; /* Start off-screen */
+            width: 300px;
+            height: 100%;
+            background-color: #007bff; /* Blue background */
+            color: white; /* White text color */
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease; /* Smooth slide animation */
+            overflow-y: auto; /* Allow scrolling if content exceeds container height */
+            padding: 20px;
+            z-index: 1000; /* Ensure it's above other elements */
+        }
+
+        /* Styling for filter options */
+        .filter-option {
+            margin-bottom: 10px;
+        }
+
+        /* Button to toggle the side slide container */
+        .toggle-btn {
+            position: fixed;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            z-index: 1000; /* Ensure it's above other elements */
+        }
+
+        /* Dim the background when the side slide container is open */
+        .dim-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 900; /* Ensure it's below the side slide container */
+            display: none;
+        }
+
+        /* Show the dimmed background when the side slide container is open */
+        .side-slide-container.open {
+            right: 0;
+        }
+
+        .dim-background.visible {
+            display: block;
+        }
+
+        /* Close button style */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
 
 </style>
 
@@ -144,6 +210,78 @@
         @TempData["ErrorMessage"]
     </div>
 }
+  <!-- Button to toggle the side slide container -->
+    <button class="toggle-btn" onclick="toggleSideSlide()">Filter</button>
+
+    <!-- Side slide container -->
+    <div class="side-slide-container" id="side-slide-container">
+        <!-- Close button -->
+        <span class="close-btn" onclick="toggleSideSlide()">&times;</span>
+        <h3 style="margin-bottom: 20px;">Filters</h3>
+        <div class="filter-option">
+            <label for="category">Category:</label>
+            <select id="category">
+
+                                            <option value="All">All</option>
+                                            <option value="Science Fiction">Science Fiction</option>
+                                            <option value="Fantasy">Fantasy</option>
+                                            <option value="Mystery">Mystery</option>
+                                            <option value="Thriller">Thriller</option>
+                                            <option value="Romance">Romance</option>
+                                            <option value="Historical Fiction">Historical Fiction</option>
+                                            <option value="Horror">Horror</option>
+                                            <option value="Adventure">Adventure</option>
+                                            <option value="Dystopian">Dystopian</option>
+                                            <option value="Young Adult">Young Adult</option>
+                                            <option value="Biography">Biography</option>
+                                            <option value="Autobiography">Autobiography</option>
+                                            <option value="Self-Help">Self-Help</option>
+                                            <option value="Business">Business</option>
+                                            <option value="Cookbook">Cookbook</option>
+                                            <option value="Travel">Travel</option>
+                                            <option value="Poetry">Poetry</option>
+                                            <option value="Graphic Novel">Graphic Novel</option>
+                                            <option value="Comics">Comics</option>
+                                            <option value="Art">Art</option>
+            </select>
+        </div>
+        <div class="filter-option">
+            <label for="sortBy">Sort By:</label>
+            <select id="sortBy">
+                <option value="price-increase">Price Increase</option>
+                <option value="price-decrease">Price Decrease</option>
+                <option value="most-popular">Most Popular</option>
+            </select>
+        </div>
+        <div class="filter-option">
+            <label for="date">Release Date:</label>
+            <input type="date" id="date">
+        </div>
+        <div class="filter-option">
+            <label for="ageLimit">Age Limitation:</label>
+            <input type="text" id="ageLimit">
+        </div>
+        <div class="filter-option">
+            <label for="priceRange">Price Range:</label>
+            <input type="text" id="priceRange">
+        </div>
+        <div class="filter-option">
+            <label for="format">Format:</label>
+            <select id="format">
+                <option value="hardback">Hardback</option>
+                <option value="soft-cover">Soft Cover</option>
+            </select>
+        </div>
+        <div class="filter-option">
+            <label for="onSale">On Sale:</label>
+            <input type="checkbox" id="onSale">
+        </div>
+ <button style="background-color: white; color: #007bff; padding: 8px 15px; border: 1px solid #007bff; border-radius: 5px; cursor: pointer;" onclick="applyFilters()">Apply Filters</button>
+
+    </div>
+
+    <!-- Dimmed background -->
+    <div class="dim-background" id="dim-background"></div>
 
 
 <div class="container mt-4">
@@ -181,7 +319,45 @@
         <p>No books found.</p>
     }
 </div>
+<!-- Update the filter container in your view -->
+<script>
+    async function applyFilters() {
+        const category = document.getElementById('category').value;
+        const sortBy = document.getElementById('sortBy').value;
+        const releaseDate = document.getElementById('date').value;
+        const ageLimit = document.getElementById('ageLimit').value;
+        const priceRange = document.getElementById('priceRange').value;
+        const format = document.getElementById('format').value;
+        const onSale = document.getElementById('onSale').checked;
 
+        try {
+            const response = await fetch(`/ProductGallery/ApplyFilters?category=${category}&sortBy=${sortBy}&releaseDate=${releaseDate}&ageLimit=${ageLimit}&priceRange=${priceRange}&format=${format}&onSale=${onSale}`, {
+                method: 'GET'
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to apply filters');
+            }
+
+            const data = await response.json();
+            console.log(data); // Log the response data for debugging
+
+            // Update the product list with the filtered data
+            // For example, update the DOM with the new product list
+            alert('Filters applied successfully');
+        } catch (error) {
+            console.error(error); // Log any errors for debugging
+            alert('Failed to apply filters. Please try again.');
+        }
+    }
+
+    function toggleSideSlide() {
+        const sideSlideContainer = document.getElementById('side-slide-container');
+        const dimBackground = document.getElementById('dim-background');
+        sideSlideContainer.classList.toggle('open');
+        dimBackground.classList.toggle('visible');
+    }
+</script>
 
 
 
