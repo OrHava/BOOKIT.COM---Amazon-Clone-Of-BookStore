@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@model FirebaseLoginAuth.Models.BookProduct
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -14,11 +15,13 @@
 
         .product-container {
             max-width: 600px; /* Increased the max-width */
+            max-height: 600px;
             margin: 0 auto;
             text-align: center;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
             overflow: hidden;
+            margin-bottom:50px;
             display: flex;
             flex-direction: row; /* Changed flex direction to row */
         }
@@ -79,21 +82,22 @@
 <body>
 
     <div class="product-container">
-        <img class="product-image" src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcQdlDRfMtqGXcyDP5yjf2Dn6EuhUeMfy5VA26o3phxamAEH3TMl" alt="Book Image">
+        <img class="product-image" src="@Model.ImageUrl alt="Book Image">
         <div class="product-details">
-            <h2>Product Name</h2>
-            <p>מאת:Jamie Kern Lima</p>
+            <h2>@Model.Name</h2>
+            <p>@Model.Author</p>
             <div class="author-info">
                 <p class="rating">דירוג: ⭐⭐⭐⭐⭐</p>
             </div>
-            <p>Description:uthor Jamie Kern Lima's first, instant New York Times bestselling book Believe It, captured her journey of going from Denny's waitress to billion-dollar entrepreneur by learning to believe in herself. And now her second, much anticipated, upcoming book Worthy, is the playbook for how YOU can believe in YOU!.</p>
-            <p>Price: $19.99</p>
-            <a href="#">
+            <p>Description: @Model.Description</p>
+            <p>Price: @Model.Price</p>
+            <a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })">
                 <button class="a-button add-to-cart">Add to Cart</button>
             </a>
-            <a href="#">
+            <a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })">
                 <button class="a-button buy-now">Buy Now</button>
             </a>
+
         </div>
     </div>
 
