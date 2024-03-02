@@ -1,4 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Http
+@using FirebaseLoginAuth.Controllers
+@using Newtonsoft.Json;
+
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     var httpContext = HttpContextAccessor.HttpContext;
@@ -198,10 +201,27 @@
             </div>
 
         </form>
-        <div class="cart-icon">
-            <i class="fa fa-shopping-cart"></i>
-            <span class="cart-count">0</span>
-        </div>
+        @if (!string.IsNullOrEmpty(httpContext.Session.GetString("_UserToken"))) // Assuming user is authenticated
+        {
+            var logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<HomeController>();
+            var cartCountResponse = await new HomeController(logger).GetCartCount();
+            var jsonResponse = JsonConvert.SerializeObject(cartCountResponse.Value);
+            var cartCount = JsonConvert.DeserializeObject<int>(jsonResponse);
+
+            <div class="cart-icon">
+                <i class="fa fa-shopping-cart"></i>
+                <span class="cart-count">@cartCount</span>
+            </div>
+        }
+        else
+        {
+            <div class="cart-icon">
+                <i class="fa fa-shopping-cart"></i>
+                <span class="cart-count">0</span>
+            </div>
+        }
+
+
     </div>
 
   

@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Page</title>
@@ -9,38 +11,41 @@
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
         }
 
         .product-container {
-            max-width: 600px; /* Increased the max-width */
-            max-height: 600px;
-            margin: 0 auto;
-            text-align: center;
+            display: flex;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            margin-bottom: 50px;
             overflow: hidden;
-            margin-bottom:50px;
-            display: flex;
-            flex-direction: row; /* Changed flex direction to row */
         }
 
-        .product-image {
-            max-width: 300px; /* Adjusted max-width */
-            height: auto;
-            border-radius: 8px 0 0 8px; /* Rounded border on the left side */
+        .image-container {
+            flex: 1;
+            text-align: center;
         }
 
-        .product-details {
-            flex-grow: 1; /* Allow the details to grow and fill the remaining space */
+            .image-container img {
+                max-width: 100%;
+                height: auto;
+            }
+
+        .details-container {
+            flex: 2;
             padding: 20px;
+        }
+
+        .price-container {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
         }
 
         .a-button {
             display: inline-block;
             padding: 10px 20px;
-            border: none;
+            border: none; /* Remove button border */
             border-radius: 5px;
             font-size: 16px;
             font-weight: bold;
@@ -77,29 +82,189 @@
             font-size: 18px;
             color: #ffac00;
         }
+
+        .description {
+            margin-top: 10px;
+            text-align: justify;
+            overflow: hidden;
+            max-height: 100px; /* Show only a few lines initially */
+            transition: max-height 0.5s ease;
+        }
+
+        .read-more {
+            color: blue;
+            border: none;
+            cursor: pointer;
+        }
+
+        .price-info {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+
+        .availability {
+            margin-top: 10px;
+            color: green; /* default to green */
+        }
+
+        .out-of-stock {
+            color: red; /* change to red if out of stock */
+        }
+
+      
+        .details {
+            display: flex;
+            justify-content: space-around; /* Adjust spacing for symmetry */
+            align-items: center; /* Center items vertically */
+            margin-top: 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: center; /* Center items horizontally */
+            align-items: center; /* Center items vertically */
+        }
+
+            .detail-item span {
+                margin-right: 10px;
+                color: #666; /* Lighter shade of black */
+                font-size: 16px;
+            }
+
+            .detail-item div {
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* Style for icons */
+            .detail-item i {
+                font-size: 1.2em; /* Adjust icon size */
+                color: #222; /* Lighter shade of black */
+                display: flex; /* Make the icon container a flex container */
+                justify-content: center; /* Center the icon horizontally */
+                align-items: center; /* Center the icon vertically */
+            }
+
+            /* Style for text */
+            .detail-item span {
+                font-size: 16px;
+                font-weight: bold;
+                color: #222; /* Lighter shade of black */
+                display: flex; /* Make the icon container a flex container */
+                justify-content: center; /* Center the icon horizontally */
+                align-items: center; /* Center the icon vertically */
+            }
+
+            .detail-item span2 {
+                font-size: 16px;
+                font-weight: bold;
+                color: #666; /* Lighter shade of black */
+                display: flex; /* Make the icon container a flex container */
+                justify-content: center; /* Center the icon horizontally */
+                align-items: center; /* Center the icon vertically */
+            }
+
+
+
     </style>
 </head>
 <body>
 
     <div class="product-container">
-        <img class="product-image" src="@Model.ImageUrl alt="Book Image">
-        <div class="product-details">
+        <div class="image-container">
+            <img src="@Model.ImageUrl" alt="Book Image">
+        </div>
+        <div class="details-container">
             <h2>@Model.Name</h2>
-            <p>@Model.Author</p>
+            <p>Date of Release: @Model.ReleaseDateFormatted</p>
             <div class="author-info">
-                <p class="rating">דירוג: ⭐⭐⭐⭐⭐</p>
+                <p class="rating">Rating: ⭐⭐⭐⭐⭐</p>
             </div>
-            <p>Description: @Model.Description</p>
-            <p>Price: @Model.Price</p>
-            <a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })">
-                <button class="a-button add-to-cart">Add to Cart</button>
-            </a>
-            <a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })">
-                <button class="a-button buy-now">Buy Now</button>
-            </a>
+            <div class="description" id="description">
+                <p>Description: @Model.Description</p>
+            </div>
+
+            <button class="read-more" id="read-more-btn">Read More</button>
+
+
+
+            <div class="details">
+                <div class="detail-item">
+                    <div>
+                        <span2>Print Length</span2>
+                        <span><i class="fas fa-book"></i></span>
+
+                        <span>@Model.Pages</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                  
+                    <div>
+                        <span2>ISBN</span2>
+                        <span><i class="fas fa-barcode"></i></span>
+                        <span>@Model.ISBN</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+          
+                    <div>
+                        <span2>Language</span2>
+                        <span><i class="fas fa-language"></i></span>
+                        <span>@Model.Language</span>
+                    </div>
+                </div>
+                <div class="detail-item">
+                  
+                    <div>
+                        <span2>Genre</span2>
+                        <span><i class="fas fa-bookmark"></i></span>
+                        <span>@Model.Genre</span>
+                    </div>
+                </div>
+            </div>
+
 
         </div>
+        <div class="price-container">
+            <div class="price-info">
+                <p>Price: $@Model.Price</p>
+                @if (Model.NumberOfAvailability > 0)
+                {
+                    <p class="availability">@Model.NumberOfAvailability In Stock</p>
+                }
+                else
+                {
+                    <p class="availability out-of-stock">Out of Stock</p>
+                }
+            </div>
+            <a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })" class="a-button add-to-cart">Add to Cart</a>
+            <a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })" class="a-button buy-now">Buy Now</a>
+        </div>
     </div>
+
+    <script>
+        const description = document.getElementById('description');
+        const readMoreBtn = document.getElementById('read-more-btn');
+
+        let isExpanded = false;
+
+        readMoreBtn.addEventListener('click', () => {
+            isExpanded = !isExpanded;
+
+            if (isExpanded) {
+                description.style.maxHeight = 'none';
+                readMoreBtn.innerText = 'Show Less';
+           
+            } else {
+                description.style.maxHeight = '100px'; // Show only a few lines
+                readMoreBtn.innerText = 'Read More';
+     
+            }
+        });
+
+
+
+    </script>
 
 </body>
 </html>

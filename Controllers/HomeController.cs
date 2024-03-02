@@ -15,12 +15,14 @@ namespace FirebaseLoginAuth.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         FirebaseAuthProvider auth;
+        private readonly HttpContext _httpContext;
         public HomeController(ILogger<HomeController> logger)
         {
             auth = new FirebaseAuthProvider(
                             new FirebaseConfig("AIzaSyBCGbr6Ia4YcSY7Mf931F3OK1qRRY8z0nc"));
             _logger = logger;
         }
+
 
 
 
@@ -51,6 +53,28 @@ namespace FirebaseLoginAuth.Controllers
             
         }
 
+
+        public async Task<JsonResult> GetCartCount()
+        {
+
+            Console.WriteLine("hey");
+            if (HttpContext != null)
+            {
+                Console.WriteLine("hey2");
+                var userId = HttpContext.Session.GetString("_UserId"); // Assuming you store the user ID in the session
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    Console.WriteLine("hey3");
+                    var cartSize = await FirebaseHelper.GetBookCartSizeByUserId(userId) ?? 0;
+                    return Json(cartSize);
+                }
+            }
+            else {
+                Console.WriteLine("hey4");
+                return Json(0); // Default to 0 if unable to get the cart count
+            }
+            return Json(0); // Default to 0 if unable to get the cart count
+        }
 
         public async Task<IActionResult> SearchBooks(string searchInput)
         {

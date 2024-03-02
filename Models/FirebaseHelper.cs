@@ -192,6 +192,30 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
             }
         }
 
+        public static async Task<int?> GetBookCartSizeByUserId(string userId)
+        {
+            try
+            {
+                var cartSnapshot = await firebase.Child("users").Child(userId).Child("cart").OnceAsync<BookProduct>();
+
+                int cartSize = 0;
+                foreach (var item in cartSnapshot)
+                {
+                    cartSize++; // Increment the count for each item in the cart
+                }
+
+                Console.WriteLine($"Retrieved cart size for user {userId}: {cartSize}");
+
+                return cartSize;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving book cart size for user {userId}: {ex.Message}");
+                return null;
+            }
+        }
+
+
         public static async Task<bool> UpdateBookProductAvailability(string adminId, string bookId, int newAvailability)
         {
             try
