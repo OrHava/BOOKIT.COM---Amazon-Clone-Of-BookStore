@@ -7,6 +7,7 @@ using Google.Cloud.Storage.V1;
 using Humanizer.Localisation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Configuration; // Added this using statement
 using System.Diagnostics.Metrics;
@@ -191,29 +192,37 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return null;
             }
         }
-
-        public static async Task<int?> GetBookCartSizeByUserId(string userId)
+        public static async Task<int> GetBookCartSizeByUserId(string userId)
         {
             try
             {
-                var cartSnapshot = await firebase.Child("users").Child(userId).Child("cart").OnceAsync<BookProduct>();
+                var cartSnapshot = await firebase
+                    .Child("users")
+                    .Child(userId)
+                    .Child("cart")
+                    .OnceSingleAsync<List<BookProduct>>();
 
-                int cartSize = 0;
-                foreach (var item in cartSnapshot)
+                // Check if cartSnapshot is not null and is a list
+                if (cartSnapshot != null && cartSnapshot is List<BookProduct> cart)
                 {
-                    cartSize++; // Increment the count for each item in the cart
+                    int cartSize = cart.Count;
+                    Console.WriteLine($"Retrieved cart size for user {userId}: {cartSize}");
+                    return cartSize;
                 }
-
-                Console.WriteLine($"Retrieved cart size for user {userId}: {cartSize}");
-
-                return cartSize;
+                else
+                {
+                    // Cart is empty or not found
+                    Console.WriteLine($"No cart found for user {userId}");
+                    return 0;
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error retrieving book cart size for user {userId}: {ex.Message}");
-                return null;
+                return 0;
             }
         }
+
 
 
         public static async Task<bool> UpdateBookProductAvailability(string adminId, string bookId, int newAvailability)
@@ -461,7 +470,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 // Return the filtered products as a JSON response
                 return filteredProducts;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new List<BookProduct>();
                 // Handle exceptions appropriately

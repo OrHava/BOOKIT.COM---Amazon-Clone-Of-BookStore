@@ -11,13 +11,40 @@ namespace FirebaseLoginAuth.Controllers
             return View();
         }
 
+        public async Task<int> GetCartCount()
+        {
+            try
+            {
+                if (HttpContext != null && !string.IsNullOrEmpty(HttpContext.Session.GetString("_UserId")))
+                {
+                    var userId = HttpContext.Session.GetString("_UserId");
+                    if (userId != null) // Add null check here
+                    {
+                        var cartSize = await FirebaseHelper.GetBookCartSizeByUserId(userId);
+                        return cartSize;
+                    }
+                }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting cart count: {ex.Message}");
+                return 0;
+            }
+        }
+
         public async Task<IActionResult> ItemSalePage(string bookId)
         {
      
 
            
                 var bookProduct = await FirebaseHelper.GetBookProductById( bookId);
-                if (bookProduct != null)
+            // Get the cart count
+            var cartCount = await GetCartCount();
+
+            // Pass the cart count to the view
+            ViewData["CartCount"] = cartCount;
+            if (bookProduct != null)
                 {
                     return View(bookProduct);
                 }
@@ -36,6 +63,11 @@ namespace FirebaseLoginAuth.Controllers
 
 
             var bookProduct = await FirebaseHelper.GetBookProductById(bookId);
+            // Get the cart count
+            var cartCount = await GetCartCount();
+
+            // Pass the cart count to the view
+            ViewData["CartCount"] = cartCount;
             if (bookProduct != null)
             {
                 return View(bookProduct);

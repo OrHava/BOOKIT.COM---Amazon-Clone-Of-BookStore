@@ -1,7 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Http
 @using FirebaseLoginAuth.Controllers
 @using Newtonsoft.Json;
-
 @inject IHttpContextAccessor HttpContextAccessor
 @{
     var httpContext = HttpContextAccessor.HttpContext;
@@ -201,25 +200,32 @@
             </div>
 
         </form>
-        @if (!string.IsNullOrEmpty(httpContext.Session.GetString("_UserToken"))) // Assuming user is authenticated
-        {
-            var logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<HomeController>();
-            var cartCountResponse = await new HomeController(logger).GetCartCount();
-            var jsonResponse = JsonConvert.SerializeObject(cartCountResponse.Value);
-            var cartCount = JsonConvert.DeserializeObject<int>(jsonResponse);
 
-            <div class="cart-icon">
-                <i class="fa fa-shopping-cart"></i>
-                <span class="cart-count">@cartCount</span>
-            </div>
+        @{
+            // Check if ViewData["CartCount"] is not null and can be cast to int
+            var cartCount = ViewData["CartCount"] != null ? (int)ViewData["CartCount"] : 0;
         }
-        else
-        {
-            <div class="cart-icon">
-                <i class="fa fa-shopping-cart"></i>
-                <span class="cart-count">0</span>
-            </div>
-        }
+
+        <div class="cart-icon">
+            @{
+                // Check if the user is signed in
+                if (string.IsNullOrEmpty(httpContext.Session.GetString("_UserId")))
+                {
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="SignIn">
+                        <i class="fa fa-shopping-cart" style="color: white; font-size: 20px;"></i>
+                        <span class="cart-count" style="color: white; font-size: 16px;">@ViewData["CartCount"]</span>
+                    </a>
+                }
+                else
+                {
+                    <a class="nav-link" asp-area="" asp-controller="User" asp-action="Cart">
+                        <i class="fa fa-shopping-cart" style="color: white; font-size: 20px;"></i>
+                        <span class="cart-count" style="color: white; font-size: 16px;">@ViewData["CartCount"]</span>
+                    </a>
+                }
+            }
+        </div>
+
 
 
     </div>
@@ -373,6 +379,29 @@
             document.getElementById("main").style.marginLeft = "0";
         }
     </script>
+    <script>
+        $(document).ready(function () {
+            // Function to fetch cart count
+            function getCartCount() {
+                $.ajax({
+                    url: '@Url.Action("GetCartCount", "Home")',
+                    type: 'GET',
+                    success: function (data) {
+                        // Update cart count
+                        $('.cart-count').text(data);
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error
+                        console.error(error);
+                    }
+                });
+            }
+
+            // Call getCartCount on page load
+            getCartCount();
+        });
+    </script>
+
 
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

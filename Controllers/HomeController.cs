@@ -15,14 +15,33 @@ namespace FirebaseLoginAuth.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         FirebaseAuthProvider auth;
-        private readonly HttpContext _httpContext;
         public HomeController(ILogger<HomeController> logger)
         {
             auth = new FirebaseAuthProvider(
                             new FirebaseConfig("AIzaSyBCGbr6Ia4YcSY7Mf931F3OK1qRRY8z0nc"));
             _logger = logger;
         }
-
+        public async Task<int> GetCartCount()
+        {
+            try
+            {
+                if (HttpContext != null && !string.IsNullOrEmpty(HttpContext.Session.GetString("_UserId")))
+                {
+                    var userId = HttpContext.Session.GetString("_UserId");
+                    if (userId != null) // Add null check here
+                    {
+                        var cartSize = await FirebaseHelper.GetBookCartSizeByUserId(userId);
+                        return cartSize;
+                    }
+                }
+                return 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting cart count: {ex.Message}");
+                return 0;
+            }
+        }
 
 
 
@@ -46,7 +65,11 @@ namespace FirebaseLoginAuth.Controllers
   
             };
 
+            // Get the cart count
+            var cartCount = await GetCartCount();
 
+            // Pass the cart count to the view
+            ViewData["CartCount"] = cartCount;
 
             return View(viewModel); // Pass the view model to the view
            
@@ -54,27 +77,7 @@ namespace FirebaseLoginAuth.Controllers
         }
 
 
-        public async Task<JsonResult> GetCartCount()
-        {
-
-            Console.WriteLine("hey");
-            if (HttpContext != null)
-            {
-                Console.WriteLine("hey2");
-                var userId = HttpContext.Session.GetString("_UserId"); // Assuming you store the user ID in the session
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    Console.WriteLine("hey3");
-                    var cartSize = await FirebaseHelper.GetBookCartSizeByUserId(userId) ?? 0;
-                    return Json(cartSize);
-                }
-            }
-            else {
-                Console.WriteLine("hey4");
-                return Json(0); // Default to 0 if unable to get the cart count
-            }
-            return Json(0); // Default to 0 if unable to get the cart count
-        }
+     
 
         public async Task<IActionResult> SearchBooks(string searchInput)
         {
@@ -96,8 +99,12 @@ namespace FirebaseLoginAuth.Controllers
                        BestSellersFantasy = bestSellersFantasy,
                     BestSellersScienceFiction = bestSellersScienceFiction
                 };
+            // Get the cart count
+            var cartCount = await GetCartCount();
 
-                return View("Index", viewModel);
+            // Pass the cart count to the view
+            ViewData["CartCount"] = cartCount;
+            return View("Index", viewModel);
          
            
         }
@@ -128,7 +135,11 @@ namespace FirebaseLoginAuth.Controllers
             {
                 TempData["ErrorMessage"] = "User authentication ID not found.";
             }
+            // Get the cart count
+            var cartCount = await GetCartCount();
 
+            // Pass the cart count to the view
+            ViewData["CartCount"] = cartCount;
             return RedirectToAction("Index");
         }
 
