@@ -226,7 +226,7 @@ namespace FirebaseLoginAuth.Controllers
 
             }
             catch (FirebaseAuthException ex)
-            {
+            { //validation with DB 
                 var firebaseEx = JsonConvert.DeserializeObject<FirebaseError>(ex.ResponseData);
                 if (firebaseEx != null && firebaseEx.error != null && firebaseEx.error.message != null)
                 {
