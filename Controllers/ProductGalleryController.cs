@@ -122,6 +122,54 @@ namespace FirebaseLoginAuth.Controllers
                 Console.WriteLine($"Search input: Science Fiction");
                 return View("SearchPage", viewModel);
             }
+
+            if (searchInput == "Mystery")
+            {
+                var bestSellersMystery = await FirebaseHelper.GetBestSellingBooksByGenre("Mystery");
+                // Pass the search results to the SearchPage view
+                var viewModel = new HomeViewModel
+                {
+                    SearchResults = bestSellersMystery
+                };
+         
+                return View("SearchPage", viewModel);
+            }
+
+            if (searchInput == "Thriller")
+            {
+                var bestSellersThriller = await FirebaseHelper.GetBestSellingBooksByGenre("Thriller");
+                // Pass the search results to the SearchPage view
+                var viewModel = new HomeViewModel
+                {
+                    SearchResults = bestSellersThriller
+                };
+       
+                return View("SearchPage", viewModel);
+            }
+
+            if (searchInput == "Romance")
+            {
+                var bestSellersRomance = await FirebaseHelper.GetBestSellingBooksByGenre("Romance");
+                // Pass the search results to the SearchPage view
+                var viewModel = new HomeViewModel
+                {
+                    SearchResults = bestSellersRomance
+                };
+             
+                return View("SearchPage", viewModel);
+            }
+
+            if (searchInput == "Historical Fiction")
+            {
+                var bestSellersHistoricalFiction = await FirebaseHelper.GetBestSellingBooksByGenre("Historical Fiction");
+                // Pass the search results to the SearchPage view
+                var viewModel = new HomeViewModel
+                {
+                    SearchResults = bestSellersHistoricalFiction
+                };
+            
+                return View("SearchPage", viewModel);
+            }
             else {
                 // Perform the search based on the searchInput
                 var searchResults = await FirebaseHelper.SearchBookProducts(searchInput);

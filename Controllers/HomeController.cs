@@ -4,7 +4,10 @@ using FirebaseLoginAuth.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.CodeAnalysis.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
 using static Google.Apis.Auth.OAuth2.Web.AuthorizationCodeWebApp;
@@ -56,13 +59,25 @@ namespace FirebaseLoginAuth.Controllers
             var bestSellersFantasy = await FirebaseHelper.GetBestSellingBooksByGenre("Fantasy");
                 var bestSellersScienceFiction = await FirebaseHelper.GetBestSellingBooksByGenre("Science Fiction");
 
-            // Populate the view model
+
+            var bestSellersMystery = await FirebaseHelper.GetBestSellingBooksByGenre("Mystery");
+            var bestSellersThriller = await FirebaseHelper.GetBestSellingBooksByGenre("Thriller");
+            var bestSellersRomance = await FirebaseHelper.GetBestSellingBooksByGenre("Romance");
+            var bestSellersHistoricalFiction = await FirebaseHelper.GetBestSellingBooksByGenre("Historical Fiction");
+
+
+
+            // Pass the search results to the view
             var viewModel = new HomeViewModel
             {
+             
                 BestSellersFantasy = bestSellersFantasy,
                 BestSellersScienceFiction = bestSellersScienceFiction,
-             
-  
+                BestSellersMystery = bestSellersMystery,
+                BestSellersThriller = bestSellersThriller,
+                BestSellersRomance = bestSellersRomance,
+                BestSellersHistoricalFiction = bestSellersHistoricalFiction
+
             };
 
             // Get the cart count
@@ -90,15 +105,25 @@ namespace FirebaseLoginAuth.Controllers
                 var bestSellersFantasy = await FirebaseHelper.GetBestSellingBooksByGenre("Fantasy");
                 var bestSellersScienceFiction = await FirebaseHelper.GetBestSellingBooksByGenre("Science Fiction");
 
-             
+            var bestSellersMystery = await FirebaseHelper.GetBestSellingBooksByGenre("Mystery");
+            var bestSellersThriller = await FirebaseHelper.GetBestSellingBooksByGenre("Thriller");
+            var bestSellersRomance = await FirebaseHelper.GetBestSellingBooksByGenre("Romance");
+            var bestSellersHistoricalFiction = await FirebaseHelper.GetBestSellingBooksByGenre("Historical Fiction");
 
-                // Pass the search results to the view
-                var viewModel = new HomeViewModel
-                {
-                    SearchResults = searchResults,
-                       BestSellersFantasy = bestSellersFantasy,
-                    BestSellersScienceFiction = bestSellersScienceFiction
-                };
+      
+
+        // Pass the search results to the view
+        var viewModel = new HomeViewModel
+            {
+                SearchResults = searchResults,
+                BestSellersFantasy = bestSellersFantasy,
+                    BestSellersScienceFiction = bestSellersScienceFiction,
+                    BestSellersMystery = bestSellersMystery,
+            BestSellersThriller= bestSellersThriller,
+            BestSellersRomance = bestSellersRomance,
+            BestSellersHistoricalFiction = bestSellersHistoricalFiction
+
+        };
             // Get the cart count
             var cartCount = await GetCartCount();
 

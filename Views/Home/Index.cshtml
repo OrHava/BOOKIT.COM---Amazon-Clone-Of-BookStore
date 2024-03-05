@@ -93,7 +93,9 @@
         font-size: 56px;
         cursor: pointer;
         z-index: 2;
+        color: #666; /* Dark gray color */
     }
+
 
     .arrow-icon-left {
         left: 20px;
@@ -215,15 +217,15 @@
 
 
 <div class="modern-card">
-    <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Fantasy</h2>
+    <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Mystery</h2>
     <div class="container specific-container">
         <div class="row" style="white-space: nowrap;">
        
-            @if (Model.BestSellersFantasy != null && Model.BestSellersFantasy.Any())
+            @if (Model.BestSellersMystery != null && Model.BestSellersMystery.Any())
             {
                 <div class="col-md-12" style="padding-right: 5px; display: inline-block;">
-              
-                    @foreach (var book in Model.BestSellersFantasy)
+
+                    @foreach (var book in Model.BestSellersMystery)
                     {
                         <div class="card" style="width: 150px; display: inline-block; margin-right: 10px;">
                             <a href="@Url.Action("ItemSalePage", "ProductGallery", new { bookId = book.BookId })">
@@ -245,15 +247,15 @@
 
 
 <div class="modern-card">
-        <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Fantasy</h2>
+    <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Thriller</h2>
     <div class="container specific-container">
             <div class="row" style="white-space: nowrap;">
-         
-                @if (Model.BestSellersFantasy != null && Model.BestSellersFantasy.Any())
+
+            @if (Model.BestSellersThriller != null && Model.BestSellersThriller.Any())
                 {
                     <div class="col-md-12" style="padding-right: 5px; display: inline-block;">
-                     
-                        @foreach (var book in Model.BestSellersFantasy)
+
+                    @foreach (var book in Model.BestSellersThriller)
                         {
                         <div class="card" style="width: 150px; display: inline-block; margin-right: 10px;">
                             <a href="@Url.Action("ItemSalePage", "ProductGallery", new { bookId = book.BookId })">
@@ -275,15 +277,15 @@
 
 
 <div class="modern-card">
-        <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Fantasy</h2>
+    <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Romance</h2>
     <div class="container specific-container">
             <div class="row" style="white-space: nowrap;">
 
-                @if (Model.BestSellersFantasy != null && Model.BestSellersFantasy.Any())
+            @if (Model.BestSellersRomance != null && Model.BestSellersRomance.Any())
                 {
                     <div class="col-md-12" style="padding-right: 5px; display: inline-block;">
-     
-                        @foreach (var book in Model.BestSellersFantasy)
+
+                    @foreach (var book in Model.BestSellersRomance)
                         {
                         <div class="card" style="width: 150px; display: inline-block; margin-right: 10px;">
                             <a href="@Url.Action("ItemSalePage", "ProductGallery", new { bookId = book.BookId })">
@@ -305,14 +307,14 @@
 
 
 <div class="modern-card">
-    <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Fantasy</h2>
+    <h2 style="font-size: 18px; margin-bottom: 10px; font-weight: bold;">Best Sellers Books in Historical Fiction</h2>
     <div class="container specific-container">
         <div class="row" style="white-space: nowrap;">
           
-            @if (Model.BestSellersFantasy != null && Model.BestSellersFantasy.Any())
+            @if (Model.BestSellersHistoricalFiction != null && Model.BestSellersHistoricalFiction.Any())
             {
                 <div class="col-md-12" style="padding-right: 5px; display: inline-block;">
-                    @foreach (var book in Model.BestSellersFantasy)
+                    @foreach (var book in Model.BestSellersHistoricalFiction)
                     {
                         <div class="card" style="width: 150px; display: inline-block; margin-right: 10px;">
                             <a href="@Url.Action("ItemSalePage", "ProductGallery", new { bookId = book.BookId })">
@@ -338,6 +340,11 @@
         var images = [
             "https://images.unsplash.com/photo-1505159940484-eb2b9f2588e2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
             "https://images.unsplash.com/photo-1578374173696-f8a2d504b144?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+            "https://images.pexels.com/photos/626164/pexels-photo-626164.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+            "https://images.pexels.com/photos/7322113/pexels-photo-7322113.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+            "https://images.pexels.com/photos/618916/pexels-photo-618916.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+            "https://images.pexels.com/photos/15880865/pexels-photo-15880865/free-photo-of-birds-flying-near-gothic-cathedral.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+
          
         ];
         var currentIndex = 0;
@@ -348,6 +355,26 @@
 
         var form2 = $('<form action="/ProductGallery/SearchBooksByGenre" method="post">' +
             '<input type="hidden" name="searchInput" value="ScienceFiction">' +
+            '</form>');
+
+            
+        var form3 = $('<form action="/ProductGallery/SearchBooksByGenre" method="post">' +
+            '<input type="hidden" name="searchInput" value="Mystery">' +
+            '</form>');
+
+            
+        var form4 = $('<form action="/ProductGallery/SearchBooksByGenre" method="post">' +
+            '<input type="hidden" name="searchInput" value="Thriller">' +
+            '</form>');
+
+            
+        var form5 = $('<form action="/ProductGallery/SearchBooksByGenre" method="post">' +
+            '<input type="hidden" name="searchInput" value="Romance">' +
+            '</form>');
+
+
+        var form6 = $('<form action="/ProductGallery/SearchBooksByGenre" method="post">' +
+            '<input type="hidden" name="searchInput" value="Historical Fiction">' +
             '</form>');
 
 
@@ -387,6 +414,23 @@
                 $('body').append(form2);
                 form2.submit();
             }
+             if (currentIndex === 2) {
+                $('body').append(form3);
+                form3.submit();
+            }
+             if (currentIndex === 3) {
+                $('body').append(form4);
+                form4.submit();
+            }
+             if (currentIndex === 4) {
+                $('body').append(form5);
+                form5.submit();
+            }
+            if (currentIndex === 5) {
+                $('body').append(form6);
+                form6.submit();
+            }
+
         });
         $(".center-button").hover(function () {
             var title = "";
@@ -394,6 +438,18 @@
                 title = "Fantasy";
             } else if (currentIndex === 1) {
                 title = "Science Fiction";
+            }
+            else if (currentIndex === 2) {
+                title = "Mystery";
+            }
+            else if (currentIndex === 3) {
+                title = "Thriller";
+            }
+            else if (currentIndex === 4) {
+                title = "Romance";
+            }
+            else if (currentIndex === 5) {
+                title = "Historical Fiction";
             }
             $(this).attr("title", title);
         });
