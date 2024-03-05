@@ -33,6 +33,9 @@
     <div class="cart-buttons">
         <a href="@Url.Action("Index", "Home")" class="a-button continue-shopping-button">Continue Shopping</a>
     </div>
+    <div class="cart-buttons">
+        <a href="@Url.Action("Index", "Payment", new { totalPrice = Model.Sum(book => book.Price) })" class="btn btn-primary">Proceed to Payment</a>
+    </div>
 }
 else
 {
