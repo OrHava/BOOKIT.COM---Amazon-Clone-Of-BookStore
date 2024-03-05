@@ -285,7 +285,21 @@
                                 }
                             }
                         </li>
+                        <li class="nav-item">
+                            @{
+                             
+                                if (httpContext != null)
+                                {
+                                    var userToken = httpContext.Session.GetString("_UserToken");
+                                    var userType = httpContext.Session.GetString("_userType");
 
+                                    if (!string.IsNullOrEmpty(userToken) && userType == "Customer")
+                                    {
+                                        <a class="nav-link" asp-area="" asp-controller="User" asp-action="BoughtItems" style="color: white; font-weight: bold;">Bought Items</a>
+                                    }
+                                }
+                            }
+                        </li>
                         <li class="nav-item">
                             @{
                                 if (httpContext != null)

@@ -1,15 +1,21 @@
-﻿@{
+﻿@* example for valid credit card 4012 8888 8888 1881  10008 (121) 322-4343*@
+
+
+@{
     ViewData["Title"] = "Payment";
 }
 
 <h1>Payment</h1>
-@*4012 8888 8888 1881*@
 
 <h2>Total Amount to Pay: $@ViewBag.TotalPrice</h2>
 
 <div id="paypal-button-container"></div>
 
-<script src="https://www.paypal.com/sdk/js?client-id=AV86GjL-g-9xtTzCTCPw0W0chaly9zmLJDDtRhvbLPi87td8clDY3-gwXzuuo7f1QfkRewmA5_vJNL5x"></script>
+<div id="success-message" style="display: none;">
+    Payment Successful!
+</div>
+
+<script src="https://www.paypal.com/sdk/js?client-id=AVhu-irB2SFslCAEFBYQ2VPfOYi7ktAV0f3sve5EaYnknNVoBXsIycsL3KBzPV1HzZWksIiANgw9XU-x"></script>
 
 <script>
     paypal.Buttons({
@@ -25,7 +31,25 @@
         onApprove: function (data, actions) {
             return actions.order.capture().then(function (details) {
                 alert('Transaction completed by ' + details.payer.name.given_name);
-                window.location.href = "/success"; // Redirect to success page
+
+                // Perform payment processing here
+                // Assuming payment is successful, trigger server-side processing
+                var totalPrice = '@ViewBag.TotalPrice'; // Get total price from ViewBag
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("ProcessPayment", "Payment")',
+                    data: { totalPrice: totalPrice },
+                    success: function (response) {
+                        // Handle success response, if needed
+                        // For example, display a success message to the user
+                        document.getElementById('success-message').style.display = 'block';
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error response, if needed
+                        // For example, display an error message to the user
+                        console.error(xhr.responseText);
+                    }
+                });
             });
         }
     }).render('#paypal-button-container');

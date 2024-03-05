@@ -136,7 +136,31 @@ namespace FirebaseLoginAuth.Controllers
             return RedirectToAction("ItemSalePage", "ProductGallery", new { bookId = bookId });
         }
 
+        public async Task<IActionResult> BoughtItems()
+        {
+            var userAuthId = HttpContext.Session.GetString("_UserId");
 
+            // Check if the user is authenticated
+            if (string.IsNullOrEmpty(userAuthId))
+            {
+                // Redirect to the sign-in page if the user is not authenticated
+                return RedirectToAction("SignIn", "Home");
+            }
+
+            try
+            {
+                // Retrieve the user's bought items from Firebase
+                var boughtItems = await FirebaseHelper.GetBoughtItems(userAuthId);
+
+                return View(boughtItems);
+            }
+            catch (Exception ex)
+            {
+                // Handle error
+                Console.WriteLine($"Error retrieving bought items: {ex.Message}");
+                return RedirectToAction("Error", "Home");
+            }
+        }
 
 
     }

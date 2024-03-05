@@ -70,6 +70,68 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
             }
         }
 
+        public static async Task<List<BookProduct>> GetBoughtItems(string userId)
+        {
+            try
+            {
+                // Path to the user's bought items
+                string boughtItemsPath = $"users/{userId}/boughtBooks";
+
+                // Retrieve the user's bought items from Firebase
+                var boughtItems = await firebase.Child(boughtItemsPath).OnceSingleAsync<List<BookProduct>>();
+
+                if (boughtItems == null)
+                {
+                    // If no bought items found, return an empty list
+                    return new List<BookProduct>();
+                }
+
+                return boughtItems;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting bought items: {ex.Message}");
+                throw; // Rethrow the exception for handling in the calling method
+            }
+        }
+        public static async Task<bool> AddBoughtBooks(string userId, List<BookProduct> boughtBooks)
+        {
+            try
+            {
+                // Path to the user's bought books list
+                string boughtBooksPath = $"users/{userId}/boughtBooks";
+
+                // Update the user's bought books list in the database
+                await firebase.Child(boughtBooksPath).PutAsync(boughtBooks);
+
+                return true; // Update successful
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding bought books: {ex.Message}");
+                return false; // Update failed
+            }
+        }
+
+        public static async Task<bool> ClearUserCart(string userId)
+        {
+            try
+            {
+                // Path to the user's cart
+                string cartPath = $"users/{userId}/cart";
+
+                // Clear the user's cart by setting it to an empty list
+                await firebase.Child(cartPath).PutAsync(new List<BookProduct>());
+
+                return true; // Cart cleared successfully
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error clearing user's cart: {ex.Message}");
+                return false; // Clearing failed
+            }
+        }
+
         public static async Task<bool> RemoveFromCart(string userId, int index)
         {
             try

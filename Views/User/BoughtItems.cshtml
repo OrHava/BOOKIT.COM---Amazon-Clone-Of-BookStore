@@ -1,0 +1,32 @@
+﻿@model List<BookProduct>
+
+<h2>Bought Items</h2>
+
+@if (Model != null && Model.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Book Title</th>
+                <th>Price</th>
+                <!-- Add more columns as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>$@item.Price</td>
+                    <!-- Add more columns as needed -->
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No bought items available.</p>
+}
+
+<a href="@Url.Action("Index", "Home")" class="btn btn-primary">Back to Home</a>
