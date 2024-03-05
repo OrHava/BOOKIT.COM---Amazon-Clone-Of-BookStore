@@ -137,6 +137,41 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return false;
             }
         }
+
+        public static async Task<bool> AddItemToNotify(string userId, BookProduct book)
+        {
+            try
+            {
+                // First, retrieve the user's current notification list
+                var userNotifications = await firebase.Child("users").Child(userId).Child("notify_books").OnceSingleAsync<List<BookProduct>>();
+
+                // If the user's notifications list is null, create a new list
+                if (userNotifications == null)
+                {
+                    userNotifications = new List<BookProduct>();
+                }
+
+                // Check if the book already exists in the notification list
+                if (userNotifications.Any(b => b.BookId == book.BookId))
+                {
+                    return false; // Book already exists, no need to add again
+                }
+
+                // Add the new item to the notification list
+                userNotifications.Add(book);
+
+                // Update the user's notification list in the database
+                await firebase.Child("users").Child(userId).Child("notify_books").PutAsync(userNotifications);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding item to notifications: {ex.Message}");
+                return false;
+            }
+        }
+
         public static async Task<List<BookProduct>> GetItemsFromCart(string userId)
         {
             try

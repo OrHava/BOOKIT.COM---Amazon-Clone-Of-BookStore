@@ -99,5 +99,45 @@ namespace FirebaseLoginAuth.Controllers
 
             return RedirectToAction("Cart");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> NotifyWhenAvailable(string bookId)
+        {
+            var userAuthId = HttpContext.Session.GetString("_UserId");
+
+            if (string.IsNullOrEmpty(userAuthId))
+            {
+                // Redirect to the sign-in page if the user is not authenticated
+                return RedirectToAction("SignIn", "Home");
+            }
+
+            var book = await FirebaseHelper.GetBookProductById(bookId);
+
+            if (book != null)
+            {
+                // Attempt to add the book to the user's notification list in Firebase
+                bool addedToNotifications = await FirebaseHelper.AddItemToNotify(userAuthId, book);
+
+                if (addedToNotifications)
+                {
+                    TempData["NotificationMessage"] = "You will be notified when the product is available.";
+                }
+                else
+                {
+                    TempData["NotificationMessage"] = "Book is already added to notifications.";
+                }
+            }
+            else
+            {
+                TempData["NotificationMessage"] = "Failed to add to notifications.";
+            }
+
+            // Redirect back to the ItemSalePage action of the ProductGalleryController
+            return RedirectToAction("ItemSalePage", "ProductGallery", new { bookId = bookId });
+        }
+
+
+
+
     }
 }

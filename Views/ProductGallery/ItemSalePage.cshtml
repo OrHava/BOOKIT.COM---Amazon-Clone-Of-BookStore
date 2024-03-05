@@ -67,6 +67,12 @@
             color: white;
         }
 
+        .Notify-now {
+            background-color: red; /* Change background color to red */
+            color: white; /* Change text color to white */
+            /* Add any additional styling you want for the button */
+        }
+
         .a-button:hover {
             opacity: 0.8;
         }
@@ -109,6 +115,14 @@
 
         .out-of-stock {
             color: red; /* change to red if out of stock */
+        }
+
+        .notification {
+            background-color: #e5f3ff;
+            color: #007bff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
         }
 
       
@@ -169,6 +183,13 @@
     </style>
 </head>
 <body>
+
+    @if (!string.IsNullOrEmpty(TempData["NotificationMessage"] as string))
+    {
+        <div class="notification">
+            @TempData["NotificationMessage"]
+        </div>
+    }
 
     <div class="product-container">
         <div class="image-container">
@@ -239,6 +260,14 @@
             </div>
             <a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })" class="a-button add-to-cart">Add to Cart</a>
             <a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })" class="a-button buy-now">Buy Now</a>
+            @if (Model.NumberOfAvailability == 0)
+            {
+                <form method="post" action="@Url.Action("NotifyWhenAvailable", "User")">
+                    <input type="hidden" name="bookId" value="@Model.BookId" />
+                    <button type="submit" class="a-button Notify-now">Notify Me When Available</button>
+                </form>
+            }
+
         </div>
     </div>
 
