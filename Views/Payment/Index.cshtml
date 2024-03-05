@@ -3,12 +3,14 @@
 }
 
 <h1>Payment</h1>
+@*4012 8888 8888 1881*@
 
 <h2>Total Amount to Pay: $@ViewBag.TotalPrice</h2>
 
 <div id="paypal-button-container"></div>
 
 <script src="https://www.paypal.com/sdk/js?client-id=AV86GjL-g-9xtTzCTCPw0W0chaly9zmLJDDtRhvbLPi87td8clDY3-gwXzuuo7f1QfkRewmA5_vJNL5x"></script>
+
 <script>
     paypal.Buttons({
         createOrder: function (data, actions) {

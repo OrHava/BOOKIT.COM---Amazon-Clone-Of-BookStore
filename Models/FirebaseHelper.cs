@@ -438,44 +438,49 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
             try
             {
                 // Get all products initially
-                var allProducts = await FirebaseHelper.GetAllProducts();
+                var allProducts = await GetAllProducts();
 
                 // Apply filters based on the criteria
                 var filteredProducts = allProducts;
 
+          
+
+                // Apply filters
+
                 // Filter by category
-                if (!string.IsNullOrEmpty(category))
+                if (!string.IsNullOrEmpty(category) && category != "All")
                 {
-                    filteredProducts = await FirebaseHelper.GetBestSellingBooksByGenre(category);
+                    filteredProducts = filteredProducts.Where(p => p.Genre == category).ToList();
                 }
 
                 // Apply other filters as needed
                 // Add more if statements for other filter criteria
 
                 // Apply sorting
-                if (sortBy == "priceIncrease")
+                if (sortBy == "price-increase")
                 {
                     filteredProducts = filteredProducts.OrderBy(p => p.Price).ToList();
                 }
-                else if (sortBy == "priceDecrease")
+                else if (sortBy == "price-decrease")
                 {
                     filteredProducts = filteredProducts.OrderByDescending(p => p.Price).ToList();
                 }
-                else if (sortBy == "mostPopular")
+                else if (sortBy == "most-popular")
                 {
                     // Implement logic to sort by popularity
                     // For example, based on the number of sales or ratings
                 }
 
-                // Return the filtered products as a JSON response
+                // Return the filtered products
                 return filteredProducts;
             }
             catch (Exception)
             {
-                return new List<BookProduct>();
                 // Handle exceptions appropriately
+                return new List<BookProduct>();
             }
         }
+
 
 
         public static async Task<string?> UploadImage(IFormFile image,String atoken)

@@ -281,46 +281,89 @@
     </div>
 
     <!-- Dimmed background -->
-    <div class="dim-background" id="dim-background"></div>
-
+<!-- Dimmed background -->
+<div class="dim-background" id="dim-background"></div>
 
 <div class="container mt-4">
     <h3>Books Found</h3>
-    @if (Model.SearchResults != null && Model.SearchResults.Any())
-    {
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Book Title</th>
-                    <th>Author</th>
-                    <th>Release Date</th>
-
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var book in Model.SearchResults)
-                {
+    <div id="searchResults">
+        @if (Model.SearchResults != null && Model.SearchResults.Any())
+        {
+            <table class="table table-striped">
+                <thead>
                     <tr>
-                        <td>@book.Name</td>
-                        <td>@book.Author</td>
-                        <td>@(book.ReleaseDate.HasValue ? book.ReleaseDate.Value.ToString("yyyy-MM-dd") : "N/A")</td>
-
-                        <td>
-                            <a class="btn btn-primary" href="@Url.Action("ItemSalePage", "ProductGallery", new { bookId = book.BookId })">View Details</a>
-                        </td>
+                        <th>Book Title</th>
+                        <th>Author</th>
+                        <th>Release Date</th>
+                        <th>Action</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p>No books found.</p>
-    }
+                </thead>
+                <tbody>
+                    @foreach (var book in Model.SearchResults)
+                    {
+                        <tr>
+                            <td>@book.Name</td>
+                            <td>@book.Author</td>
+                            <td>@(book.ReleaseDate.HasValue ? book.ReleaseDate.Value.ToString("yyyy-MM-dd") : "N/A")</td>
+                            <td>
+                                <a class="btn btn-primary" href="@Url.Action("ItemSalePage", "ProductGallery", new { bookId = book.BookId })">View Details</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No books found.</p>
+        }
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        function toggleSideSlide() {
+            const sideSlideContainer = document.getElementById('side-slide-container');
+            const dimBackground = document.getElementById('dim-background');
+            sideSlideContainer.classList.toggle('open');
+            dimBackground.classList.toggle('visible');
+        }
+        function applyFilters() {
+            var category = document.getElementById("category").value;
+            var sortBy = document.getElementById("sortBy").value;
+            var releaseDate = document.getElementById("date").value;
+            var ageLimit = document.getElementById("ageLimit").value;
+            var priceRange = document.getElementById("priceRange").value;
+            var format = document.getElementById("format").value;
+            var onSale = document.getElementById("onSale").checked;
+
+            $.ajax({
+                url: '@Url.Action("ApplyFilters", "ProductGallery")',
+                type: 'GET',
+                data: {
+                    category: category,
+                    sortBy: sortBy,
+                    releaseDate: releaseDate,
+                    ageLimit: ageLimit,
+                    priceRange: priceRange,
+                    format: format,
+                    onSale: onSale
+                },
+                success: function (response) {
+                    $('#searchResults').html(response);
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        }
+
+                // Your toggleSideSlide function implementation
+    </script>
+}
+
 <!-- Update the filter container in your view -->
-<script>
+@*<script>
     async function applyFilters() {
         const category = document.getElementById('category').value;
         const sortBy = document.getElementById('sortBy').value;
@@ -361,4 +404,4 @@
 
 
 
-
+*@
