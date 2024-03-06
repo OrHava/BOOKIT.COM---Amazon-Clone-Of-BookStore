@@ -673,7 +673,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 var filteredProducts = allProducts;
 
 
-
+                //
                 // Apply filters
 
                 // Filter by category
