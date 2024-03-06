@@ -275,6 +275,21 @@ namespace FirebaseLoginAuth.Controllers
             return View();
         }
 
+        public IActionResult PrivacyPolicy()
+        {
+            return View();
+        }
+
+        public IActionResult TermsAndConditions()
+        {
+            return View();
+        }
+
+        public IActionResult AdChoices()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(string email)
         {

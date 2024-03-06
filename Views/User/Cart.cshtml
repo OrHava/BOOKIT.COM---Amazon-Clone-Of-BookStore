@@ -34,8 +34,34 @@
         <a href="@Url.Action("Index", "Home")" class="a-button continue-shopping-button">Continue Shopping</a>
     </div>
     <div class="cart-buttons">
-        <a href="@Url.Action("Index", "Payment", new { totalPrice = Model.Sum(book => book.Price) })" class="btn btn-primary">Proceed to Payment</a>
+        @if (Model != null && Model.Count > 0)
+        {
+            // Check if any book has availability less than or equal to 0
+            bool anyUnavailable = Model.Any(book => book.NumberOfAvailability <= 0);
+
+            if (!anyUnavailable)
+            {
+                <a href="@Url.Action("Index", "Payment", new { totalPrice = Model.Sum(book => book.Price) })" class="btn btn-primary">Proceed to Payment</a>
+            }
+            else
+            {
+                <button class="btn btn-primary" disabled>Proceed to Payment</button>
+                <p>The following books are not available:</p>
+                <ul>
+                    @foreach (var book in Model.Where(book => book.NumberOfAvailability <= 0))
+                    {
+                        <li>@book.Name</li>
+                    }
+                </ul>
+            }
+        }
+        else
+        {
+            <button class="btn btn-primary" disabled>Proceed to Payment</button>
+        }
     </div>
+
+
 }
 else
 {

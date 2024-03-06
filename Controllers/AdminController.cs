@@ -17,7 +17,27 @@ namespace FirebaseLoginAuth.Controllers
         {
             return View("Add_Remove_Product_Admin");
         }
-      
+
+
+        public async Task<IActionResult> BoughtBooks()
+        {
+         
+            var userAuthId = HttpContext.Session.GetString("_UserId");
+
+            if (!string.IsNullOrEmpty(userAuthId))
+            {
+                // Retrieve the list of products bought by users
+                var boughtBooks = await FirebaseHelper.GetAdminBoughtBooks(userAuthId);
+
+                return View(boughtBooks);
+
+            }
+            else
+            {
+                return RedirectToAction("Add_Remove_Product_Admin");
+            }
+        }
+
 
         public async Task<IActionResult> GetBooksProducts()
         {

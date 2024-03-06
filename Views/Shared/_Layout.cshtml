@@ -285,6 +285,22 @@
                                 }
                             }
                         </li>
+
+                        <li class="nav-item">
+                            @{
+
+                                if (httpContext != null)
+                                {
+                                    var userToken = httpContext.Session.GetString("_UserToken");
+                                    var userType = httpContext.Session.GetString("_userType");
+
+                                    if (!string.IsNullOrEmpty(userToken) && userType == "Admin")
+                                    {
+                                        <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="BoughtBooks" style="color: white; font-weight: bold;">Bought Books</a>
+                                    }
+                                }
+                            }
+                        </li>
                         <li class="nav-item">
                             @{
                              
@@ -348,7 +364,17 @@
 
             <li class="nav-item">
                 @{
-                    <a class="nav-link" style="color: black; font-size: 16px;" asp-area="" asp-controller="Payment" asp-action="Index">Payment<span style="margin-left: 5px;">&gt;</span></a>
+                    <a class="nav-link" style="color: black; font-size: 16px;" asp-area="" asp-controller="Home" asp-action="TermsAndConditions">Terms And Conditions<span style="margin-left: 5px;">&gt;</span></a>
+                }
+            </li>
+              <li class="nav-item">
+                @{
+                    <a class="nav-link" style="color: black; font-size: 16px;" asp-area="" asp-controller="Home" asp-action="PrivacyPolicy">Privacy Policy<span style="margin-left: 5px;">&gt;</span></a>
+                }
+            </li>
+            <li class="nav-item">
+                @{
+                    <a class="nav-link" style="color: black; font-size: 16px;" asp-area="" asp-controller="Home" asp-action="AdChoices">Ad Choices<span style="margin-left: 5px;">&gt;</span></a>
                 }
             </li>
         </ul>
@@ -370,17 +396,18 @@
         <footer class="mt-5">
             <div class="container container-footer">
                 <div class="text-center">
-                    <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=508088&ref_=footer_cou" style="color: #ffffff; font-size: 12px;">Terms and Conditions</a>
+                    <a href="@Url.Action("TermsAndConditions", "Home")" style="color: #ffffff; font-size: 12px;">Terms and Conditions</a>
                 </div>
                 <div class="text-center">
-                    <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=508088&ref_=footer_cou" style="color: #ffffff; font-size: 12px;">Privacy Policy</a>
+                    <a href="@Url.Action("PrivacyPolicy", "Home")" style="color: #ffffff; font-size: 12px;">Privacy Policy</a>
                 </div>
                 <div class="text-center">
-                    <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=508088&ref_=footer_cou" style="color: #ffffff; font-size: 12px;">Ad Choices</a>
+                    <a href="@Url.Action("AdChoices", "Home")" style="color: #ffffff; font-size: 12px;">Ad Choices</a>
                 </div>
             </div>
         </footer>
     }
+
 
     <script>
         function openNav() {

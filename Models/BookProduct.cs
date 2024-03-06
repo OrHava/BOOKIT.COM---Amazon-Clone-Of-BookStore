@@ -78,4 +78,15 @@ namespace FirebaseLoginAuth.Models
 
    
     }
+
+
+    public class BookCustomerAssociation
+    {
+        public string? BookId { get; set; }
+        public string? CustomerId { get; set; }
+
+        public string? BookName { get; set; }
+        public string? CustomerName { get; set; }
+    }
+
 }

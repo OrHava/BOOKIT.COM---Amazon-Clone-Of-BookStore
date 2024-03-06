@@ -1,0 +1,31 @@
+﻿@model List<BookCustomerAssociation>
+
+<h2>Products Bought by Users</h2>
+
+@if (Model != null && Model.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+
+                <th>Book ID</th>
+                <th>Book Name</th>
+                <th>Customer Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var association in Model)
+            {
+                <tr>
+                    <td>@association.BookId</td>
+                    <td>@association.BookName</td>
+                    <td>@association.CustomerName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No products bought by users.</p>
+}

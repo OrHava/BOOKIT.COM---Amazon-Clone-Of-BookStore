@@ -31,6 +31,12 @@ namespace FirebaseLoginAuth.Controllers
                     // Add the bought books to a new list
                     await FirebaseHelper.AddBoughtBooks(userAuthId, cartItems);
 
+                    // Update availability for each bought book in the products root
+                    foreach (var item in cartItems)
+                    {
+                        await FirebaseHelper.UpdateBookProductAvailabilityToBeLessOne(item, userAuthId); // Decrease availability by 1
+                    }
+
                     // Clear the user's cart after successful purchase
                     await FirebaseHelper.ClearUserCart(userAuthId);
 

@@ -49,6 +49,30 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
             }
         }
 
+        public static async Task<string?> GetCustomerNameById(string customerId)
+        {
+            try
+            {
+                var userSnapshot = await firebase.Child("users").Child(customerId).OnceSingleAsync<Dictionary<string, object>>();
+
+                if (userSnapshot != null && userSnapshot.TryGetValue("UserName", out object? userName))
+                {
+                    return userName?.ToString();
+                }
+                else
+                {
+                    return null; // User name not found or user snapshot is null
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving customer name by ID: {ex.Message}");
+                return null;
+            }
+        }
+
+
+
         public static async Task<string?> GetUserType(string uid)
         {
             try
@@ -101,8 +125,19 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 // Path to the user's bought books list
                 string boughtBooksPath = $"users/{userId}/boughtBooks";
 
+                // Retrieve the user's existing bought books list
+                var existingBoughtBooks = await firebase.Child(boughtBooksPath).OnceSingleAsync<List<BookProduct>>();
+
+                if (existingBoughtBooks == null)
+                {
+                    existingBoughtBooks = new List<BookProduct>();
+                }
+
+                // Add the new books to the existing bought books list
+                existingBoughtBooks.AddRange(boughtBooks);
+
                 // Update the user's bought books list in the database
-                await firebase.Child(boughtBooksPath).PutAsync(boughtBooks);
+                await firebase.Child(boughtBooksPath).PutAsync(existingBoughtBooks);
 
                 return true; // Update successful
             }
@@ -112,6 +147,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return false; // Update failed
             }
         }
+
 
         public static async Task<bool> ClearUserCart(string userId)
         {
@@ -289,6 +325,8 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return null;
             }
         }
+
+
         public static async Task<int> GetBookCartSizeByUserId(string userId)
         {
             try
@@ -317,6 +355,100 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
             {
                 Console.WriteLine($"Error retrieving book cart size for user {userId}: {ex.Message}");
                 return 0;
+            }
+        }
+
+
+        public static async Task<bool> UpdateBookProductAvailabilityToBeLessOne(BookProduct book, String customerId)
+        {
+           
+                try
+                {
+                    if (book != null && !string.IsNullOrEmpty(customerId))
+                    {
+                        // Construct the paths to update the book product availability
+                        string productsRootPath = $"Products/{book.BookId}";
+                        string adminRootPath = $"users/{book.AdminId}/Products/{book.BookId}";
+                        string adminBoughtBooksPath = $"users/{book.AdminId}/ProductsBought";
+
+                        // Retrieve the existing book product from the database
+                        var existingBookProduct = await GetBookProductById(book.BookId);
+                        if (existingBookProduct != null)
+                        {
+                            // Update the existing book product's NumberOfAvailability property
+                            existingBookProduct.NumberOfAvailability -= 1; // Decrease availability by 1
+
+                            // Save the updated book product back to the database in the products root
+                            await firebase.Child(productsRootPath).PutAsync(existingBookProduct);
+
+                            // Save the updated book product back to the database in the admin's root
+                            await firebase.Child(adminRootPath).PutAsync(existingBookProduct);
+
+                            // Create a new association between the book and the customer
+                            var association = new BookCustomerAssociation
+                            {
+                                BookId = book.BookId,
+                                CustomerId = customerId
+                            };
+
+                            // Save the association to the ProductsBought node under the admin's root
+                            await firebase.Child(adminBoughtBooksPath).PostAsync(association);
+
+                            return true; // Update successful
+                        }
+                        else
+                        {
+                            return false; // Book product not found
+                        }
+                    }
+                    else
+                    {
+                        return false; // Book object or customer ID is null or empty
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error updating book product availability: {ex.Message}");
+                    return false; // Update failed
+                }
+            }
+
+
+
+
+
+        public static async Task<List<BookCustomerAssociation>> GetAdminBoughtBooks(string adminId)
+        {
+            try
+            {
+                // Retrieve the user's bought books from the database
+                var adminBoughtBooksSnapshot = await firebase.Child("users").Child(adminId).Child("ProductsBought").OnceAsync<BookCustomerAssociation>();
+
+                var adminBoughtBooks = new List<BookCustomerAssociation>();
+
+                foreach (var item in adminBoughtBooksSnapshot)
+                {
+                    var association = item.Object;
+
+                    // Fetch book information
+                    var book = await GetBookProductById(association.BookId);
+                    if (book != null)
+                        association.BookName = book.Name;
+
+                    // Fetch customer information
+                    var customerName = await GetCustomerNameById(association.CustomerId);
+                    if (customerName != null)
+                        association.CustomerName = customerName;
+
+                    adminBoughtBooks.Add(association);
+                }
+
+                return adminBoughtBooks;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving bought books for admin {adminId}: {ex.Message}");
+                return new List<BookCustomerAssociation>(); // Return an empty list on error
             }
         }
 

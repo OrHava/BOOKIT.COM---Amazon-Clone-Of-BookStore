@@ -258,14 +258,18 @@
                     <p class="availability out-of-stock">Out of Stock</p>
                 }
             </div>
-            <a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })" class="a-button add-to-cart">Add to Cart</a>
-            <a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })" class="a-button buy-now">Buy Now</a>
+     
             @if (Model.NumberOfAvailability == 0)
             {
                 <form method="post" action="@Url.Action("NotifyWhenAvailable", "User")">
                     <input type="hidden" name="bookId" value="@Model.BookId" />
                     <button type="submit" class="a-button Notify-now">Notify Me When Available</button>
                 </form>
+            }
+            else
+            {
+                <a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })" class="a-button add-to-cart">Add to Cart</a>
+                <a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })" class="a-button buy-now">Buy Now</a>
             }
 
         </div>
