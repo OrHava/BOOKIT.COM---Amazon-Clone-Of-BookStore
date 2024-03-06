@@ -246,6 +246,7 @@
             </select>
         </div>
         <div class="filter-option">
+            <input type="text" id="searchQuery" placeholder="Search...">
             <label for="sortBy">Sort By:</label>
             <select id="sortBy">
                 <option value="price-increase">Price Increase</option>
@@ -335,6 +336,7 @@
             var ageLimit = document.getElementById("ageLimit").value;
             var priceRange = document.getElementById("priceRange").value;
             var format = document.getElementById("format").value;
+            var searchQuery = document.getElementById("searchQuery").value;
             var onSale = document.getElementById("onSale").checked;
 
             $.ajax({
@@ -347,10 +349,12 @@
                     ageLimit: ageLimit,
                     priceRange: priceRange,
                     format: format,
+                    searchQuery:searchQuery,
                     onSale: onSale
                 },
                 success: function (response) {
                     $('#searchResults').html(response);
+                    toggleSideSlide();
                 },
                 error: function (xhr, status, error) {
                     console.error(xhr.responseText);
@@ -358,7 +362,6 @@
             });
         }
 
-                // Your toggleSideSlide function implementation
     </script>
 }
 

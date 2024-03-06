@@ -662,7 +662,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return new List<BookProduct>();
             }
         }
-        public static async Task<List<BookProduct>> ApplyFilters(string category, string sortBy, string releaseDate, string ageLimit, string priceRange, string format, bool onSale)
+        public static async Task<List<BookProduct>> ApplyFilters(string category, string sortBy, string releaseDate, int ageLimit, int priceRange, string format,string searchQuery, bool onSale)
         {
             try
             {
@@ -672,20 +672,29 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 // Apply filters based on the criteria
                 var filteredProducts = allProducts;
 
-          
+
 
                 // Apply filters
 
                 // Filter by category
+
+                //if(searchQuery != null)
+                //{
+                //    filteredProducts = SearchBookProducts(searchQuery);
+
+                //}
+
                 if (!string.IsNullOrEmpty(category) && category != "All")
                 {
                     filteredProducts = filteredProducts.Where(p => p.Genre == category).ToList();
                 }
 
-                // Apply other filters as needed
-                // Add more if statements for other filter criteria
+                if(priceRange != 0)
+                {
+                    filteredProducts = filteredProducts.OrderBy(p => p.Price).ToList();
 
-                // Apply sorting
+                }
+
                 if (sortBy == "price-increase")
                 {
                     filteredProducts = filteredProducts.OrderBy(p => p.Price).ToList();
@@ -694,11 +703,34 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 {
                     filteredProducts = filteredProducts.OrderByDescending(p => p.Price).ToList();
                 }
+
+                // fix
                 else if (sortBy == "most-popular")
                 {
-                    // Implement logic to sort by popularity
-                    // For example, based on the number of sales or ratings
+                    filteredProducts = filteredProducts.OrderByDescending(p => p.IsBestseller).ToList();
                 }
+
+                if (!string.IsNullOrEmpty(releaseDate))
+                {
+                    var parsedReleaseDate = DateTime.Parse(releaseDate);
+                    filteredProducts = filteredProducts.Where(p => p.ReleaseDate == parsedReleaseDate.Date).ToList();
+                }
+
+                if (ageLimit != 0) {
+                    filteredProducts = filteredProducts.Where(p => p.AgeLimitation == ageLimit).ToList();
+
+                }
+                if (format!=null) {
+                    filteredProducts = filteredProducts.Where(p => p.Format == format).ToList();
+
+                }
+                // fix
+                //if (onSale)
+                //{
+                //    filteredProducts = filteredProducts.Where(p => p.IsOnSell == onSale).ToList();
+
+                //}
+
 
                 // Return the filtered products
                 return filteredProducts;
