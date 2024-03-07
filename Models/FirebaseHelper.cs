@@ -261,6 +261,19 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 // Update the user's notification list in the database
                 await firebase.Child("users").Child(userId).Child("notify_books").PutAsync(userNotifications);
 
+                // Check if the book is available again (NumberOfAvailability > 0)
+                if (book.NumberOfAvailability > 0)
+                {
+                    // Notify the user that the book is available again
+                    Console.WriteLine($"Book with ID {book.BookId} is available again. You can purchase it now.");
+
+                    // Remove the book from the notified list
+                    userNotifications.Remove(book);
+
+                    // Update the user's notification list in the database
+                    await firebase.Child("users").Child(userId).Child("notify_books").PutAsync(userNotifications);
+                }
+
                 return true;
             }
             catch (Exception ex)
@@ -269,6 +282,51 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return false;
             }
         }
+        /// <////////////////////////////////////////////////////////////////////>
+      
+        //create a list of all notified books in database
+        public static async Task<List<BookProduct>> GetNotifiedBooks(string userId)
+        {
+            try
+            {
+                // Retrieve the user's notified books list from the database
+                var userNotifications = await firebase.Child("users").Child(userId).Child("notify_books").OnceSingleAsync<List<BookProduct>>();
+
+                // If the user's notifications list is null, return an empty list
+                if (userNotifications == null)
+                {
+                    return new List<BookProduct>();
+                }
+
+                return userNotifications;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting notified books: {ex.Message}");
+                return new List<BookProduct>();
+            }
+        }
+        
+        public static async Task<List<BookProduct>> GetAvailableAgainBooks(string userId)
+        {
+            try
+            {
+                var userNotifications = await firebase.Child("users").Child(userId).Child("available_again_books").OnceSingleAsync<List<BookProduct>>();
+
+                if (userNotifications == null)
+                {
+                    return new List<BookProduct>();
+                }
+
+                return userNotifications;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting available again books: {ex.Message}");
+                return new List<BookProduct>();
+            }
+        }
+        ////////////////////////////////omer////////////////////////////////////////////////////////
 
         public static async Task<List<BookProduct>> GetItemsFromCart(string userId)
         {
@@ -291,6 +349,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return new List<BookProduct>(); // Return an empty list on error
             }
         }
+        ////////////////////////////////omer////////////////////////////////////////////////////////
 
 
         public static async Task<bool> CreateBookProductData(BookProduct bookProduct,string uid )
