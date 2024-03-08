@@ -264,7 +264,8 @@
         </div>
         <div class="filter-option">
             <label for="priceRange">Price Range:</label>
-            <input type="text" id="priceRange">
+            <input type="text" id="minpriceRange" placeholder="Min price">
+             <input type="text" id="maxpriceRange" placeholder="Max price">
         </div>
         <div class="filter-option">
             <label for="format">Format:</label>
@@ -334,7 +335,8 @@
             var sortBy = document.getElementById("sortBy").value;
             var releaseDate = document.getElementById("date").value;
             var ageLimit = document.getElementById("ageLimit").value;
-            var priceRange = document.getElementById("priceRange").value;
+            var minpriceRange = document.getElementById("minpriceRange").value
+            var maxpriceRange = document.getElementById("maxpriceRange").value;
             var format = document.getElementById("format").value;
             var searchQuery = document.getElementById("searchQuery").value;
             var onSale = document.getElementById("onSale").checked;
@@ -347,7 +349,8 @@
                     sortBy: sortBy,
                     releaseDate: releaseDate,
                     ageLimit: ageLimit,
-                    priceRange: priceRange,
+                    minpriceRange: minpriceRange,
+                    maxpriceRange: maxpriceRange,
                     format: format,
                     searchQuery:searchQuery,
                     onSale: onSale

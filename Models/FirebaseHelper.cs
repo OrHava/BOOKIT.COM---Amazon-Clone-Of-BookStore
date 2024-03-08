@@ -677,6 +677,19 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 var productsSnapshot = await firebase.Child("Products").OnceAsync<BookProduct>();
                 List<BookProduct> searchResults = new List<BookProduct>();
 
+                if (string.IsNullOrEmpty(searchTerm)){
+                    foreach (var productSnapshot in productsSnapshot)
+                    {
+                        BookProduct product = productSnapshot.Object;
+                  
+                        
+                            searchResults.Add(product);
+
+                        
+                    }
+                    return searchResults;
+
+                }
                 // Perform case-insensitive partial matching client-side
                 foreach (var productSnapshot in productsSnapshot)
                 {
@@ -721,7 +734,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return new List<BookProduct>();
             }
         }
-        public static async Task<List<BookProduct>> ApplyFilters(string category, string sortBy, string releaseDate, int ageLimit, int priceRange, string format,string searchQuery, bool onSale)
+        public static async Task<List<BookProduct>> ApplyFilters(string category, string sortBy, string releaseDate, int ageLimit, int minpriceRange,int maxpriceRange, string format,string searchQuery, bool onSale)
         {
             try
             {
@@ -737,20 +750,21 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
 
                 // Filter by category
 
-                //if(searchQuery != null)
-                //{
-                //    filteredProducts = SearchBookProducts(searchQuery);
+                if(!string.IsNullOrEmpty(searchQuery))
+                {
+                    filteredProducts = filteredProducts.Where(p => p.Name == searchQuery).ToList();
 
-                //}
+
+                }
 
                 if (!string.IsNullOrEmpty(category) && category != "All")
                 {
                     filteredProducts = filteredProducts.Where(p => p.Genre == category).ToList();
                 }
 
-                if(priceRange != 0)
+                if((minpriceRange <maxpriceRange) || (minpriceRange!=0 && maxpriceRange!=0))
                 {
-                    filteredProducts = filteredProducts.OrderBy(p => p.Price).ToList();
+                    filteredProducts = filteredProducts.Where(p => p.Price>=minpriceRange && p.Price<=maxpriceRange).ToList();
 
                 }
 
@@ -774,21 +788,26 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                     var parsedReleaseDate = DateTime.Parse(releaseDate);
                     filteredProducts = filteredProducts.Where(p => p.ReleaseDate == parsedReleaseDate.Date).ToList();
                 }
-
+              
                 if (ageLimit != 0) {
+
                     filteredProducts = filteredProducts.Where(p => p.AgeLimitation == ageLimit).ToList();
 
                 }
-                if (format!=null) {
-                    filteredProducts = filteredProducts.Where(p => p.Format == format).ToList();
-
-                }
-                // fix
-                //if (onSale)
-                //{
-                //    filteredProducts = filteredProducts.Where(p => p.IsOnSell == onSale).ToList();
+                //if (format!=null) {
+                //    filteredProducts = filteredProducts.Where(p => p.Format == format).ToList();
 
                 //}
+
+                if (onSale)
+                {
+                    filteredProducts = filteredProducts.Where(p => p.IsOnSell == true).ToList();
+                }
+                else if (!onSale)
+                {
+                    filteredProducts = filteredProducts.Where(p => p.IsOnSell == false).ToList();
+
+                }
 
 
                 // Return the filtered products

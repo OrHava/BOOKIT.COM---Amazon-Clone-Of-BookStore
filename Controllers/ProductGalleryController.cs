@@ -188,12 +188,12 @@ namespace FirebaseLoginAuth.Controllers
 
         
         }
-        public async Task<IActionResult> ApplyFilters(string category, string sortBy, string releaseDate, int ageLimit, int priceRange, string format,string searchQuery, bool onSale)
+        public async Task<IActionResult> ApplyFilters(string category, string sortBy, string releaseDate, int ageLimit, int minpriceRange,int maxpriceRange, string format,string searchQuery, bool onSale)
         {
             try
             {
                 
-                var filteredProducts = await FirebaseHelper.ApplyFilters(category, sortBy, releaseDate, ageLimit, priceRange, format, searchQuery,onSale);
+                var filteredProducts = await FirebaseHelper.ApplyFilters(category, sortBy, releaseDate, ageLimit, minpriceRange,maxpriceRange, format, searchQuery,onSale);
           
                 var viewModel = new HomeViewModel
                 {
