@@ -180,20 +180,20 @@ namespace FirebaseLoginAuth.Controllers
 
             if (!string.IsNullOrEmpty(userAuthId))
             {
-                // Update the availability of the book product identified by 'id'
+         
                 bool updated = await FirebaseHelper.UpdateBookProductAvailability(userAuthId, id, amount);
                 var bookProducts = await FirebaseHelper.GetAllBookedAdminBookProducts(userAuthId);
-                // Optionally, you can handle the result of the update operation
+          
                 if (updated)
                 {
-                    // Redirect to the appropriate action or view after updating the availability
+
                  
                     return View("BookProductsList", bookProducts);
                 }
                 else
                 {
-                    // Handle the case where the update failed
-                    return RedirectToAction("BookProductsList", bookProducts); // Redirect back to the same view
+              
+                    return RedirectToAction("BookProductsList", bookProducts); 
                 }
             }
             else
@@ -233,11 +233,12 @@ namespace FirebaseLoginAuth.Controllers
                             && bookProduct.Edition != null
                                && bookProduct.AgeLimitation != null
                                  && bookProduct.IsOnSell != null
+                                  && bookProduct.OldPrice != null
 
                         )
                     {
                         // Initialize a new instance of BookProduct
-                        BookProduct newBookProduct = new BookProduct(
+                        BookProduct newBookProduct = new(
                      
                             name: bookProduct.Name,
                             isOnSell: (bool)bookProduct.IsOnSell,
@@ -246,6 +247,7 @@ namespace FirebaseLoginAuth.Controllers
                             releaseDate: (DateTime)bookProduct.ReleaseDate,
                             numberOfAvailability: (int)bookProduct.NumberOfAvailability,
                             price: (decimal)bookProduct.Price,
+                             oldPrice: (decimal)bookProduct.OldPrice,
                             isbn: bookProduct.ISBN,
                             description: bookProduct.Description,
                             pages: (int)bookProduct.Pages,

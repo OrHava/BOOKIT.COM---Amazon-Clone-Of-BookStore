@@ -150,7 +150,7 @@
         /* Button to toggle the side slide container */
         .toggle-btn {
             position: fixed;
-            top: 50%;
+      
             right: 0;
             transform: translateY(-50%);
             background-color: #007bff;
@@ -252,6 +252,7 @@
                 <option value="price-increase">Price Increase</option>
                 <option value="price-decrease">Price Decrease</option>
                 <option value="most-popular">Most Popular</option>
+            <option value="category">Category</option>
             </select>
         </div>
         <div class="filter-option">
@@ -270,13 +271,13 @@
         <div class="filter-option">
             <label for="format">Format:</label>
             <select id="format">
-                <option value="hardback">Hardback</option>
-                <option value="soft-cover">Soft Cover</option>
+                <option value="Hardback">Hardback</option>
+                <option value="Softcover">Softcover</option>
             </select>
         </div>
         <div class="filter-option">
             <label for="onSale">On Sale:</label>
-            <input type="checkbox" id="onSale">
+        <input type="checkbox" id="onSale" checked>
         </div>
  <button style="background-color: white; color: #007bff; padding: 8px 15px; border: 1px solid #007bff; border-radius: 5px; cursor: pointer;" onclick="applyFilters()">Apply Filters</button>
 
@@ -286,29 +287,63 @@
 <!-- Dimmed background -->
 <div class="dim-background" id="dim-background"></div>
 
+
+
+
 <div class="container mt-4">
-    <h3>Books Found</h3>
+
     <div id="searchResults">
         @if (Model.SearchResults != null && Model.SearchResults.Any())
         {
             <table class="table table-striped">
-                <thead>
+                <thead class="thead-dark">
                     <tr>
-                        <th>Book Title</th>
-                        <th>Author</th>
-                        <th>Release Date</th>
-                        <th>Action</th>
+                        <th scope="col">Image</th>
+                        <th scope="col">Details</th>
+                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var book in Model.SearchResults)
+                    @foreach (var bookProduct in Model.SearchResults)
                     {
                         <tr>
-                            <td>@book.Name</td>
-                            <td>@book.Author</td>
-                            <td>@(book.ReleaseDate.HasValue ? book.ReleaseDate.Value.ToString("yyyy-MM-dd") : "N/A")</td>
+                            <td><img src="@bookProduct.ImageUrl" alt="Book Photo" class="img-thumbnail" style="max-width: 200px; max-height: 200px;" /></td>
                             <td>
-                                <a class="btn btn-primary" href="@Url.Action("ItemSalePage", "ProductGallery", new { bookId = book.BookId })">View Details</a>
+                                <strong>Name:</strong> @bookProduct.Name<br />
+                                <strong>Author:</strong> @bookProduct.Author<br />
+                                <strong>Publisher:</strong> @bookProduct.Publisher<br />
+                                <strong>Release Date:</strong> @(bookProduct.ReleaseDate?.ToShortDateString() ?? "N/A")<br />
+                                <strong>Sold Books:</strong> @bookProduct.SoldBooks<br />
+                                <strong>Stock Availability:</strong> @bookProduct.NumberOfAvailability<br />
+                                <strong>Price:</strong> $@bookProduct.Price<br />
+                                <strong>ISBN:</strong> @bookProduct.ISBN<br />
+                                <strong>Pages:</strong> @bookProduct.Pages<br />
+                                <strong>Language:</strong> @bookProduct.Language<br />
+                                <strong>Genre:</strong> @bookProduct.Genre<br />
+                                <strong>Bestseller:</strong> @(bookProduct.IsBestseller.HasValue ? (bookProduct.IsBestseller.Value ? "Yes" : "No") : "N/A")<br />
+                                <strong>Format:</strong> @bookProduct.Format<br />
+                                <strong>Country:</strong> @bookProduct.Country<br />
+                                <strong>Dimensions:</strong> @bookProduct.Dimensions<br />
+                                <strong>Weight:</strong> @bookProduct.Weight<br />
+                                <strong>Edition:</strong> @bookProduct.Edition<br />
+                                <strong>Age Limitation:</strong> @bookProduct.AgeLimitation<br />
+                                <strong>Is On Sell:</strong> @(bookProduct.IsOnSell.HasValue ? (bookProduct.IsOnSell.Value ? "Yes" : "No") : "N/A")<br />
+                                @if (bookProduct.IsOnSell.HasValue && bookProduct.IsOnSell.Value)
+                                {
+                                    <strong>Old Price:</strong> @(bookProduct.OldPrice.HasValue ? "$" + bookProduct.OldPrice.Value.ToString("0.0") : "N/A")
+
+                                    <br />
+
+
+                                    <br />
+                                }
+                            </td>
+                            <td>
+                                <a class="btn btn-primary" href="@Url.Action("ItemSalePage", "ProductGallery", new { bookId = bookProduct.BookId })">View Details</a>
+
+
+
+
                             </td>
                         </tr>
                     }
@@ -321,6 +356,7 @@
         }
     </div>
 </div>
+
 
 @section Scripts {
     <script>

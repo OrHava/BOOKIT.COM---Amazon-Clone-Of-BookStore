@@ -35,14 +35,18 @@
                 // Perform payment processing here
                 // Assuming payment is successful, trigger server-side processing
                 var totalPrice = '@ViewBag.TotalPrice'; // Get total price from ViewBag
+                var bookId = '@ViewBag.BookId'; // Get the book ID from ViewBag
+
+
                 $.ajax({
                     type: 'POST',
                     url: '@Url.Action("ProcessPayment", "Payment")',
-                    data: { totalPrice: totalPrice },
+                    data: { totalPrice: totalPrice, bookId: bookId },
                     success: function (response) {
                         // Handle success response, if needed
                         // For example, display a success message to the user
                         document.getElementById('success-message').style.display = 'block';
+                        window.location.href = '@Url.Action("Index", "Home")';
                     },
                     error: function (xhr, status, error) {
                         // Handle error response, if needed

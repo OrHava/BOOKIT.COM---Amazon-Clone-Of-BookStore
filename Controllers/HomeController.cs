@@ -17,7 +17,7 @@ namespace FirebaseLoginAuth.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        FirebaseAuthProvider auth;
+        readonly FirebaseAuthProvider auth;
         public HomeController(ILogger<HomeController> logger)
         {
             auth = new FirebaseAuthProvider(
@@ -48,51 +48,50 @@ namespace FirebaseLoginAuth.Controllers
 
 
 
-        // Controller action
         public async Task<IActionResult> Index()
         {
-
-
-          
-
-            // Get best selling books for fantasy and science fiction
-            var bestSellersFantasy = await FirebaseHelper.GetBestSellingBooksByGenre("Fantasy");
-                var bestSellersScienceFiction = await FirebaseHelper.GetBestSellingBooksByGenre("Science Fiction");
-
-
-            var bestSellersMystery = await FirebaseHelper.GetBestSellingBooksByGenre("Mystery");
-            var bestSellersThriller = await FirebaseHelper.GetBestSellingBooksByGenre("Thriller");
-            var bestSellersRomance = await FirebaseHelper.GetBestSellingBooksByGenre("Romance");
-            var bestSellersHistoricalFiction = await FirebaseHelper.GetBestSellingBooksByGenre("Historical Fiction");
-
-
-
-            // Pass the search results to the view
-            var viewModel = new HomeViewModel
+            try
             {
-             
-                BestSellersFantasy = bestSellersFantasy,
-                BestSellersScienceFiction = bestSellersScienceFiction,
-                BestSellersMystery = bestSellersMystery,
-                BestSellersThriller = bestSellersThriller,
-                BestSellersRomance = bestSellersRomance,
-                BestSellersHistoricalFiction = bestSellersHistoricalFiction
+                var viewModel = new HomeViewModel();
 
-            };
+                // Concurrently fetch best-selling books for different genres
+                var tasks = new List<Task<List<BookProduct>>>
+        {
+            FirebaseHelper.GetBestSellingBooksByGenre("Fantasy"),
+            FirebaseHelper.GetBestSellingBooksByGenre("Science Fiction"),
+            FirebaseHelper.GetBestSellingBooksByGenre("Mystery"),
+            FirebaseHelper.GetBestSellingBooksByGenre("Thriller"),
+            FirebaseHelper.GetBestSellingBooksByGenre("Romance"),
+            FirebaseHelper.GetBestSellingBooksByGenre("Historical Fiction")
+        };
 
-            // Get the cart count
-            var cartCount = await GetCartCount();
+                // Await all tasks simultaneously
+                await Task.WhenAll(tasks);
 
-            // Pass the cart count to the view
-            ViewData["CartCount"] = cartCount;
+                // Assign results to the view model
+                viewModel.BestSellersFantasy = tasks[0].Result;
+                viewModel.BestSellersScienceFiction = tasks[1].Result;
+                viewModel.BestSellersMystery = tasks[2].Result;
+                viewModel.BestSellersThriller = tasks[3].Result;
+                viewModel.BestSellersRomance = tasks[4].Result;
+                viewModel.BestSellersHistoricalFiction = tasks[5].Result;
 
-            return View(viewModel); // Pass the view model to the view
-           
-            
+                // Get the cart count
+                var cartCount = await GetCartCount();
+
+                // Pass the cart count to the view
+                ViewData["CartCount"] = cartCount;
+
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving best-selling books: {ex.Message}");
+                return View(new HomeViewModel()); // Return an empty view model on error
+            }
         }
 
 
-     
 
         public async Task<IActionResult> SearchBooks(string searchInput)
         {
@@ -176,7 +175,7 @@ namespace FirebaseLoginAuth.Controllers
         {
             // Remove the user token from the session
             HttpContext.Session.Remove("_UserToken");
-
+            HttpContext.Session.Clear();
             // Remove the Remember Me cookies
             Response.Cookies.Delete("RememberMe");
             Response.Cookies.Delete("UserEmail");

@@ -83,11 +83,21 @@
             color: #555;
         }
 
-        .rating {
-            margin-top: 10px;
-            font-size: 18px;
-            color: #ffac00;
+        .price-container {
+            display: flex;
+            flex-direction: column;
         }
+
+        .old-price {
+            text-decoration: line-through;
+            color: #999; /* Faded color for old price */
+        }
+
+        .price-difference {
+            color: green; /* Green color for price difference */
+            font-weight: bold;
+        }
+
 
         .description {
             margin-top: 10px;
@@ -125,7 +135,10 @@
             border-radius: 5px;
         }
 
-      
+      .old-price .old-price-value {
+    text-decoration: line-through;
+}
+
         .details {
             display: flex;
             justify-content: space-around; /* Adjust spacing for symmetry */
@@ -199,7 +212,7 @@
             <h2>@Model.Name</h2>
             <p>Date of Release: @Model.ReleaseDateFormatted</p>
             <div class="author-info">
-                <p class="rating">Rating: ⭐⭐⭐⭐⭐</p>
+                <p class="rating">Sold Books: @Model.SoldBooks</p>
             </div>
             <div class="description" id="description">
                 <p>Description: @Model.Description</p>
@@ -248,7 +261,35 @@
         </div>
         <div class="price-container">
             <div class="price-info">
-                <p>Price: $@Model.Price</p>
+                @if (Model.IsBestseller == true)
+                {
+                    <p class="on-sale-label"> <strong>The Book is Best seller.</strong></p>
+                }
+                @if (Model.IsOnSell == true)
+                {
+                    <p class="on-sale-label">On Sale!</p>
+                    <div class="price-container">
+                        <div class="old-price">
+                            <strong>Old Price:</strong> @(Model.OldPrice.HasValue ? "$" + Model.OldPrice.Value.ToString("0.00") : "N/A")
+                        </div>
+                        <div class="price">
+                            <strong>Price:</strong> $@Model.Price
+                        </div>
+                        @if (Model.OldPrice.HasValue)
+                        {
+                            <div class="price-difference">
+                                <strong>Save:</strong> $@(Model.OldPrice.Value - Model.Price)
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="price">
+                        <strong>Price:</strong> $@Model.Price
+                    </div>
+                }
+
                 @if (Model.NumberOfAvailability > 0)
                 {
                     <p class="availability">@Model.NumberOfAvailability In Stock</p>
@@ -269,12 +310,26 @@
             else
             {
                 <a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })" class="a-button add-to-cart">Add to Cart</a>
-                <a href="@Url.Action("ViewCart", "User", new { bookId = Model.BookId })" class="a-button buy-now">Buy Now</a>
+
+                <a href="@Url.Action("Index", "Payment", new { totalPrice =  Model.Price,bookId = Model.BookId })" class="a-button buy-now">Buy Now</a>
             }
 
         </div>
     </div>
+    <h2>Product Details</h2>
+    <div class="product-container">
+   
+        <div class="col-md-6">
+            <p><strong>Author:</strong> @Model.Author</p>
+            <p><strong>Publisher:</strong> @Model.Publisher</p>
+            <p><strong>Country:</strong> @Model.Country</p>
+            <p><strong>Dimensions:</strong> @Model.Dimensions</p>
+            <p><strong>Weight:</strong> @Model.Weight</p>
+            <p><strong>Edition:</strong> @Model.Edition</p>
+            <p><strong>Age Limit:</strong> @Model.AgeLimitation</p>
+        </div>
 
+        </div>
     <script>
         const description = document.getElementById('description');
         const readMoreBtn = document.getElementById('read-more-btn');

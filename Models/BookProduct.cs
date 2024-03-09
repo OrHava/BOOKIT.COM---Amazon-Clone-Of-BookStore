@@ -10,14 +10,17 @@ namespace FirebaseLoginAuth.Models
     {
         public string? BookId { get; set; }
         public string? AdminId { get; set; }
-        public string? Name { get; set; }
+
+        public int? SoldBooks  { get; set; }
+    public string? Name { get; set; }
         public string? Author { get; set; }
         public string? Publisher { get; set; }
         [NotMapped] 
-        public string ReleaseDateFormatted { get; set; }
+        public string? ReleaseDateFormatted { get; set; }
         public DateTime?  ReleaseDate { get; set; }
         public int?   NumberOfAvailability { get; set; }
         public decimal? Price { get; set; }
+        public decimal? OldPrice { get; set; }
         public string? ISBN { get; set; }
         public string? Description { get; set; }
         public int? Pages { get; set; }
@@ -35,14 +38,14 @@ namespace FirebaseLoginAuth.Models
 
         public BookProduct()
         {
-            // Initialize properties if needed
+            
         }
 
         // Constructor with parameters
-        public BookProduct(bool isOnSell,int ageLimitation,string name, string author, string publisher, DateTime releaseDate,int numberOfAvailability, decimal price, string isbn, string description, int pages, string language, string genre, bool isBestseller, string format, string country, string dimensions, string weight, string edition)
+        public BookProduct(bool isOnSell,int ageLimitation,string name, string author, string publisher, DateTime releaseDate,int numberOfAvailability, decimal price, decimal oldPrice, string isbn, string description, int pages, string language, string genre, bool isBestseller, string format, string country, string dimensions, string weight, string edition)
         {
             // Generate a random 6-digit number
-            Random rand = new Random();
+            Random rand = new();
             int randomNumber = rand.Next(100000, 999999);
             ReleaseDateFormatted = releaseDate.ToString("MM/dd/yyyy");
 
@@ -74,6 +77,7 @@ namespace FirebaseLoginAuth.Models
             Dimensions = dimensions;
             Weight = weight;
             Edition = edition;
+            OldPrice = oldPrice;
         }
 
    

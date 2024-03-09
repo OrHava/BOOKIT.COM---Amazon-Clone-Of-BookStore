@@ -3,6 +3,7 @@ using FirebaseLoginAuth.Models;
 using System.Collections.Generic;
 using FirebaseLoginAuth.Helpers;
 using Microsoft.AspNetCore.Http;
+using Firebase.Auth;
 
 namespace FirebaseLoginAuth.Controllers
 {
@@ -15,8 +16,11 @@ namespace FirebaseLoginAuth.Controllers
             // Check if the user is authenticated
             if (string.IsNullOrEmpty(userAuthId))
             {
-                // Redirect to the sign-in page if the user is not authenticated
-                return RedirectToAction("SignIn", "Home");
+                // Generate a random ID
+                userAuthId = Guid.NewGuid().ToString(); // Use Guid to generate a unique ID
+
+                // Store the random ID in the session
+                HttpContext.Session.SetString("_UserId", userAuthId);
             }
 
             var book = await FirebaseHelper.GetBookProductById(bookId);
@@ -133,7 +137,7 @@ namespace FirebaseLoginAuth.Controllers
             }
 
             // Redirect back to the ItemSalePage action of the ProductGalleryController
-            return RedirectToAction("ItemSalePage", "ProductGallery", new { bookId = bookId });
+            return RedirectToAction("ItemSalePage", "ProductGallery", new { bookId });
         }
 
         public async Task<IActionResult> BoughtItems()
@@ -161,8 +165,41 @@ namespace FirebaseLoginAuth.Controllers
                 return RedirectToAction("Error", "Home");
             }
         }
-        ////////
-        ///
+        public async Task<IActionResult> DisplayNotifiedBooks()
+        {
+            var userAuthId = HttpContext.Session.GetString("_UserId");
+            // Check if the user is authenticated
+            if (string.IsNullOrEmpty(userAuthId))
+            {
+                // Redirect to the sign-in page if the user is not authenticated
+                return RedirectToAction("SignIn", "Home");
+            }
+
+            try
+            {
+                // Retrieve the user's bought items from Firebase
+                // Get all notified books
+                var allNotifiedBooks = await FirebaseHelper.GetAllNotifiedBooks(userAuthId);
+
+                // Get notified books with availability greater than 0
+                var availableNotifiedBooks = await FirebaseHelper.GetNotifiedBooks(userAuthId);
+
+                // Pass both lists to the view
+                ViewData["AllNotifiedBooks"] = allNotifiedBooks;
+                ViewData["AvailableNotifiedBooks"] = availableNotifiedBooks;
+
+                return View();
+
+            }
+            catch (Exception ex)
+            {
+                // Handle error
+                Console.WriteLine($"Error retrieving bought items: {ex.Message}");
+                return RedirectToAction("SignIn", "Home");
+            }
+           
+        }
+
 
 
     }

@@ -41,7 +41,7 @@
 
             if (!anyUnavailable)
             {
-                <a href="@Url.Action("Index", "Payment", new { totalPrice = Model.Sum(book => book.Price) })" class="btn btn-primary">Proceed to Payment</a>
+                <a href="@Url.Action("Index", "Payment", new { totalPrice = Model.Sum(book => book.Price) , bookId = "Cart" })" class="btn btn-primary">Confirm Payment</a>
             }
             else
             {

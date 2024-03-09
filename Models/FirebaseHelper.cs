@@ -1,22 +1,8 @@
-﻿using Firebase.Auth;
+﻿
 using Firebase.Database;
 using Firebase.Database.Query;
 using Firebase.Storage;
 using FirebaseLoginAuth.Models;
-using Google.Cloud.Storage.V1;
-using Humanizer.Localisation;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Configuration; // Added this using statement
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
-using System.Security.Policy;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
 {
@@ -27,7 +13,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
             .AddJsonFile("appsettings.json")
             .Build();
 
-        private static readonly FirebaseClient firebase = new FirebaseClient(configuration["Firebase:Url"],
+        private static readonly FirebaseClient firebase = new(configuration["Firebase:Url"],
                                                                              new FirebaseOptions
                                                                              {
                             
@@ -35,11 +21,11 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                                                                              });
 
 
-        public static async Task<bool> CreateUserData( string uid, string Usertype,string UserName)
+        public static async Task<bool> CreateUserData( string uid, string userType,string UserName)
         {
             try
             {
-                await firebase.Child("users").Child(uid).PutAsync(new {  Usertype, UserName });
+                await firebase.Child("users").Child(uid).PutAsync(new {  userType, UserName });
                 return true;
             }
             catch (Exception ex)
@@ -61,7 +47,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 }
                 else
                 {
-                    return null; // User name not found or user snapshot is null
+                    return null; 
                 }
             }
             catch (Exception ex)
@@ -85,7 +71,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                         return userType?.ToString();
                     }
                 }
-                return null; // User type not found or user snapshot is null
+                return null; 
             }
             catch (Exception ex)
             {
@@ -118,6 +104,34 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 throw; // Rethrow the exception for handling in the calling method
             }
         }
+
+        public static async Task<bool> AddBoughtBook(string userId, BookProduct boughtBook)
+        {
+            try
+            {
+                // Path to the user's bought books list
+                string boughtBooksPath = $"users/{userId}/boughtBooks";
+
+                // Retrieve the user's existing bought books list
+                var existingBoughtBooks = await firebase.Child(boughtBooksPath).OnceSingleAsync<List<BookProduct>>();
+
+                existingBoughtBooks ??= new List<BookProduct>();
+
+                // Add the new book to the existing bought books list
+                existingBoughtBooks.Add(boughtBook);
+
+                // Update the user's bought books list in the database
+                await firebase.Child(boughtBooksPath).PutAsync(existingBoughtBooks);
+
+                return true; // Update successful
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding bought book: {ex.Message}");
+                return false; // Update failed
+            }
+        }
+
         public static async Task<bool> AddBoughtBooks(string userId, List<BookProduct> boughtBooks)
         {
             try
@@ -128,10 +142,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 // Retrieve the user's existing bought books list
                 var existingBoughtBooks = await firebase.Child(boughtBooksPath).OnceSingleAsync<List<BookProduct>>();
 
-                if (existingBoughtBooks == null)
-                {
-                    existingBoughtBooks = new List<BookProduct>();
-                }
+                existingBoughtBooks ??= new List<BookProduct>();
 
                 // Add the new books to the existing bought books list
                 existingBoughtBooks.AddRange(boughtBooks);
@@ -216,10 +227,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 var userCart = await firebase.Child("users").Child(userId).Child("cart").OnceSingleAsync<List<BookProduct>>();
 
                 // If the user's cart is null, create a new list
-                if (userCart == null)
-                {
-                    userCart = new List<BookProduct>();
-                }
+                userCart ??= new List<BookProduct>();
 
                 // Add the new item to the cart
                 userCart.Add(book);
@@ -244,10 +252,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 var userNotifications = await firebase.Child("users").Child(userId).Child("notify_books").OnceSingleAsync<List<BookProduct>>();
 
                 // If the user's notifications list is null, create a new list
-                if (userNotifications == null)
-                {
-                    userNotifications = new List<BookProduct>();
-                }
+                userNotifications ??= new List<BookProduct>();
 
                 // Check if the book already exists in the notification list
                 if (userNotifications.Any(b => b.BookId == book.BookId))
@@ -282,8 +287,8 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return false;
             }
         }
-        /// <////////////////////////////////////////////////////////////////////>
-      
+     
+
         //create a list of all notified books in database
         public static async Task<List<BookProduct>> GetNotifiedBooks(string userId)
         {
@@ -298,7 +303,27 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                     return new List<BookProduct>();
                 }
 
-                return userNotifications;
+                List<BookProduct> availableBooks = new();
+
+                foreach (var notification in userNotifications)
+                {
+                    var bookId = notification.BookId;
+
+                    if (bookId != null)
+                    {
+                        // Get the book product by its ID
+                        var bookProduct = await GetBookProductById(bookId);
+
+                        // If the book product is available, add it to the available books list
+                        if (bookProduct != null && bookProduct.NumberOfAvailability > 0)
+                        {
+                            availableBooks.Add(bookProduct);
+                        }
+                    }
+                }
+
+                return availableBooks;
+
             }
             catch (Exception ex)
             {
@@ -306,12 +331,13 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return new List<BookProduct>();
             }
         }
-        
-        public static async Task<List<BookProduct>> GetAvailableAgainBooks(string userId)
+
+
+        public static async Task<List<BookProduct>> GetAllNotifiedBooks(string userId)
         {
             try
             {
-                var userNotifications = await firebase.Child("users").Child(userId).Child("available_again_books").OnceSingleAsync<List<BookProduct>>();
+                var userNotifications = await firebase.Child("users").Child(userId).Child("notify_books").OnceSingleAsync<List<BookProduct>>();
 
                 if (userNotifications == null)
                 {
@@ -326,7 +352,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return new List<BookProduct>();
             }
         }
-        ////////////////////////////////omer////////////////////////////////////////////////////////
+    
 
         public static async Task<List<BookProduct>> GetItemsFromCart(string userId)
         {
@@ -349,7 +375,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return new List<BookProduct>(); // Return an empty list on error
             }
         }
-        ////////////////////////////////omer////////////////////////////////////////////////////////
+   
 
 
         public static async Task<bool> CreateBookProductData(BookProduct bookProduct,string uid )
@@ -423,7 +449,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
            
                 try
                 {
-                    if (book != null && !string.IsNullOrEmpty(customerId))
+                    if (book != null && !string.IsNullOrEmpty(customerId) && book.BookId != null)
                     {
                         // Construct the paths to update the book product availability
                         string productsRootPath = $"Products/{book.BookId}";
@@ -436,9 +462,11 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                         {
                             // Update the existing book product's NumberOfAvailability property
                             existingBookProduct.NumberOfAvailability -= 1; // Decrease availability by 1
-
-                            // Save the updated book product back to the database in the products root
-                            await firebase.Child(productsRootPath).PutAsync(existingBookProduct);
+                                                                           // Increment sold count or set to 1 if not exist
+                        existingBookProduct.SoldBooks = existingBookProduct.SoldBooks ?? 0;
+                        existingBookProduct.SoldBooks += 1;
+                        // Save the updated book product back to the database in the products root
+                        await firebase.Child(productsRootPath).PutAsync(existingBookProduct);
 
                             // Save the updated book product back to the database in the admin's root
                             await firebase.Child(adminRootPath).PutAsync(existingBookProduct);
@@ -475,32 +503,50 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
 
 
 
-
         public static async Task<List<BookCustomerAssociation>> GetAdminBoughtBooks(string adminId)
         {
             try
             {
-                // Retrieve the user's bought books from the database
-                var adminBoughtBooksSnapshot = await firebase.Child("users").Child(adminId).Child("ProductsBought").OnceAsync<BookCustomerAssociation>();
+                var adminBoughtBooksSnapshot = await firebase
+                    .Child("users")
+                    .Child(adminId)
+                    .Child("ProductsBought")
+                    .OnceAsync<BookCustomerAssociation>();
 
-                var adminBoughtBooks = new List<BookCustomerAssociation>();
+                var adminBoughtBooksTasks = adminBoughtBooksSnapshot
+                    .Select(async item =>
+                    {
+                        var association = item.Object;
 
-                foreach (var item in adminBoughtBooksSnapshot)
-                {
-                    var association = item.Object;
+                        if (association.BookId != null && association.CustomerId != null)
+                        {
+                            // Fetch book and customer information concurrently
+                            var bookTask = GetBookProductById(association.BookId);
+                            var customerNameTask = GetCustomerNameById(association.CustomerId);
 
-                    // Fetch book information
-                    var book = await GetBookProductById(association.BookId);
-                    if (book != null)
-                        association.BookName = book.Name;
+                            // Await both tasks simultaneously
+                            await Task.WhenAll(bookTask, customerNameTask);
 
-                    // Fetch customer information
-                    var customerName = await GetCustomerNameById(association.CustomerId);
-                    if (customerName != null)
-                        association.CustomerName = customerName;
+                            // Populate association with book and customer information
+                            if (bookTask.Result != null)
+                                association.BookName = bookTask.Result.Name;
 
-                    adminBoughtBooks.Add(association);
-                }
+                            association.CustomerName = customerNameTask.Result;
+
+                            return association;
+                        }
+
+                        return null;
+                    });
+
+                // Await all tasks and filter out null results
+                var adminBoughtBooksArray = await Task.WhenAll(adminBoughtBooksTasks);
+
+                // Filter out null elements and convert to a list of non-nullable type
+                var adminBoughtBooks = adminBoughtBooksArray
+                    .Where(x => x != null) // Filter out null elements
+                    .Select(x => x!) // Convert nullable elements to non-nullable using the ! operator
+                    .ToList();
 
                 return adminBoughtBooks;
             }
@@ -567,6 +613,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                         existingBookProduct.ReleaseDate = updatedBookProduct.ReleaseDate;
                         existingBookProduct.NumberOfAvailability = updatedBookProduct.NumberOfAvailability;
                         existingBookProduct.Price = updatedBookProduct.Price;
+                        existingBookProduct.OldPrice = updatedBookProduct.OldPrice;
                         existingBookProduct.ISBN = updatedBookProduct.ISBN;
                         existingBookProduct.Description = updatedBookProduct.Description;
                         existingBookProduct.Pages = updatedBookProduct.Pages;
@@ -640,7 +687,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
             try
             {
                 var productsSnapshot = await firebase.Child("Products").OnceAsync<BookProduct>();
-                List<BookProduct> allProducts = new List<BookProduct>();
+                List<BookProduct> allProducts = new();
 
                 foreach (var productSnapshot in productsSnapshot)
                 {
@@ -670,52 +717,13 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return new List<BookProduct>();
             }
         }
-        public static async Task<List<BookProduct>?> SearchBookProducts(string searchTerm)
-        {
-            try
-            {
-                var productsSnapshot = await firebase.Child("Products").OnceAsync<BookProduct>();
-                List<BookProduct> searchResults = new List<BookProduct>();
-
-                if (string.IsNullOrEmpty(searchTerm)){
-                    foreach (var productSnapshot in productsSnapshot)
-                    {
-                        BookProduct product = productSnapshot.Object;
-                  
-                        
-                            searchResults.Add(product);
-
-                        
-                    }
-                    return searchResults;
-
-                }
-                // Perform case-insensitive partial matching client-side
-                foreach (var productSnapshot in productsSnapshot)
-                {
-                    BookProduct product = productSnapshot.Object;
-                    if (product.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
-                    {
-                        searchResults.Add(product);
-                    
-                    }
-                }
-
-                return searchResults;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error searching book products: {ex.Message}");
-                return null;
-            }
-        }
 
         public static async Task<List<BookProduct>> GetBestSellingBooksByGenre(string genre)
         {
             try
             {
                 var productsSnapshot = await firebase.Child("Products").OnceAsync<BookProduct>();
-                List<BookProduct> bestSellingBooksByGenre = new List<BookProduct>();
+                List<BookProduct> bestSellingBooksByGenre = new();
 
                 foreach (var productSnapshot in productsSnapshot)
                 {
@@ -734,6 +742,50 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return new List<BookProduct>();
             }
         }
+        public static async Task<List<BookProduct>?> SearchBookProducts(string searchTerm)
+        {
+            try
+            {
+                var productsSnapshot = await firebase.Child("Products").OnceAsync<BookProduct>();
+                List<BookProduct> searchResults = new();
+
+                if (string.IsNullOrEmpty(searchTerm)){
+                    foreach (var productSnapshot in productsSnapshot)
+                    {
+                        BookProduct product = productSnapshot.Object;
+                  
+                        
+                            searchResults.Add(product);
+
+                        
+                    }
+                    return searchResults;
+
+                }
+                // Perform case-insensitive partial matching client-side
+                foreach (var productSnapshot in productsSnapshot)
+                {
+                    BookProduct product = productSnapshot.Object;
+                    if (product.Name != null) {
+                        if (product.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase ) || product.BookId == searchTerm)
+                        {
+                            searchResults.Add(product);
+
+                        }
+                    }
+                   
+                }
+
+                return searchResults;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error searching book products: {ex.Message}");
+                return null;
+            }
+        }
+
+     
         public static async Task<List<BookProduct>> ApplyFilters(string category, string sortBy, string releaseDate, int ageLimit, int minpriceRange,int maxpriceRange, string format,string searchQuery, bool onSale)
         {
             try
@@ -744,17 +796,37 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 // Apply filters based on the criteria
                 var filteredProducts = allProducts;
 
+                Console.WriteLine($"filteredProducts: ");
+                foreach (var book in filteredProducts)
+                {
+                    Console.WriteLine($"Book Title: {book.Name}");
+                    Console.WriteLine($"Author: {book.Author}");
+                    Console.WriteLine($"ISBN: {book.ISBN}");
+                    // Add other properties as needed
+                    Console.WriteLine(); // Add a blank line for separation
+                }
 
-                
                 // Apply filters
 
                 // Filter by category
 
-                if(!string.IsNullOrEmpty(searchQuery))
+                if (!string.IsNullOrEmpty(searchQuery))
                 {
                     filteredProducts = filteredProducts.Where(p => p.Name == searchQuery).ToList();
 
 
+                }
+
+  
+
+                Console.WriteLine($"After filteredProducts: ");
+                foreach (var book in filteredProducts)
+                {
+                    Console.WriteLine($"Book Title: {book.Name}");
+                    Console.WriteLine($"Author: {book.Author}");
+                    Console.WriteLine($"ISBN: {book.ISBN}");
+                    // Add other properties as needed
+                    Console.WriteLine(); // Add a blank line for separation
                 }
 
                 if (!string.IsNullOrEmpty(category) && category != "All")
@@ -777,11 +849,16 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                     filteredProducts = filteredProducts.OrderByDescending(p => p.Price).ToList();
                 }
 
-                // fix
+             
                 else if (sortBy == "most-popular")
                 {
-                    filteredProducts = filteredProducts.OrderByDescending(p => p.IsBestseller).ToList();
+                    filteredProducts = filteredProducts.OrderByDescending(p => p.SoldBooks).ToList();
                 }
+                if (sortBy == "category")
+                {
+                    filteredProducts = filteredProducts.OrderBy(p => p.Genre).ToList();
+                }
+
 
                 if (!string.IsNullOrEmpty(releaseDate))
                 {
@@ -791,13 +868,14 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
               
                 if (ageLimit != 0) {
 
-                    filteredProducts = filteredProducts.Where(p => p.AgeLimitation == ageLimit).ToList();
+                    filteredProducts = filteredProducts.Where(p => p.AgeLimitation <= ageLimit).ToList();
 
                 }
-                //if (format!=null) {
-                //    filteredProducts = filteredProducts.Where(p => p.Format == format).ToList();
+                if (format != null)
+                {
+                    filteredProducts = filteredProducts.Where(p => p.Format == format).ToList();
 
-                //}
+                }
 
                 if (onSale)
                 {
@@ -828,32 +906,30 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
             {
 
 
-              
+
 
                 // Convert IFormFile to Stream
-                using (var stream = image.OpenReadStream())
-                {
-                    // Construct FirebaseStorage, specify path and Put the file there
-                    var task = new FirebaseStorage(
-                       "studyproject-b90ae.appspot.com",
-                        new FirebaseStorageOptions
-                        {
-                            AuthTokenAsyncFactory = () => Task.FromResult(atoken),
-                            ThrowOnCancel = true
-                        })
-                        .Child("data")
-                        .Child("images")
-                        .Child(image.FileName) // use file name as object in storage
-                        .PutAsync(stream);
+                using var stream = image.OpenReadStream();
+                // Construct FirebaseStorage, specify path and Put the file there
+                var task = new FirebaseStorage(
+                   "studyproject-b90ae.appspot.com",
+                    new FirebaseStorageOptions
+                    {
+                        AuthTokenAsyncFactory = () => Task.FromResult(atoken),
+                        ThrowOnCancel = true
+                    })
+                    .Child("data")
+                    .Child("images")
+                    .Child(image.FileName) // use file name as object in storage
+                    .PutAsync(stream);
 
-                    // Track progress of the upload
-                    task.Progress.ProgressChanged += (s, e) => Console.WriteLine($"Progress: {e.Percentage} %");
+                // Track progress of the upload
+                task.Progress.ProgressChanged += (s, e) => Console.WriteLine($"Progress: {e.Percentage} %");
 
-                    // await the task to wait until upload completes and get the download url
-                    var downloadUrl = await task;
+                // await the task to wait until upload completes and get the download url
+                var downloadUrl = await task;
 
-                    return downloadUrl;
-                }
+                return downloadUrl;
             }
             catch (Exception ex)
             {

@@ -41,6 +41,7 @@
                             <strong>Author:</strong> @bookProduct.Author<br />
                             <strong>Publisher:</strong> @bookProduct.Publisher<br />
                             <strong>Release Date:</strong> @(bookProduct.ReleaseDate?.ToShortDateString() ?? "N/A")<br />
+                            <strong>Sold Books:</strong> @bookProduct.SoldBooks<br />
                             <strong>Stock Availability:</strong> @bookProduct.NumberOfAvailability<br />
                             <strong>Price:</strong> $@bookProduct.Price<br />
                             <strong>ISBN:</strong> @bookProduct.ISBN<br />
@@ -56,9 +57,18 @@
                             <strong>Edition:</strong> @bookProduct.Edition<br />
                             <strong>Age Limitation:</strong> @bookProduct.AgeLimitation<br />
                             <strong>Is On Sell:</strong> @(bookProduct.IsOnSell.HasValue ? (bookProduct.IsOnSell.Value ? "Yes" : "No") : "N/A")<br />
+                            @if (bookProduct.IsOnSell.HasValue && bookProduct.IsOnSell.Value)
+                            {
+                                <strong>Old Price:</strong> @(bookProduct.OldPrice.HasValue ? "$" + bookProduct.OldPrice.Value.ToString("0.0") : "N/A")
+
+                                <br />
+
+
+                                <br />
+                            }
                         </td>
                         <td>
-                            <div class="btn-group" role="group" aria-label="Book Actions">
+                            <div class="btn-group mb-3" role="group" aria-label="Book Actions">
                                 <!-- Edit Button -->
                                 <a href="@Url.Action("Edit_Book_Product", new { id = bookProduct.BookId })" class="btn btn-primary">
                                     <i class="fas fa-edit mr-1"></i> Edit
@@ -72,8 +82,8 @@
                             </div>
                             <!-- Add Form -->
                             <form method="post" action="@Url.Action("Add_Book_Product", new { id = bookProduct.BookId })" class="mt-2">
-                                <div class="column">
-                                    <div class="col-md-12">
+                                <div class="column ">
+                                    <div class="col-md-12  mb-3">
                                         <div class="input-group">
                                             <input type="number" class="form-control" name="amount" min="1" required>
                                         </div>
@@ -81,7 +91,7 @@
                                     <div class="col-md-12">
                                         <div class="input-group-append">
                                             <button type="submit" class="btn btn-success btn-block">
-                                                <i class="fas fa-plus"></i> Add
+                                                <i class="fas fa-plus"></i> Order Books
                                             </button>
                                         </div>
                                     </div>
