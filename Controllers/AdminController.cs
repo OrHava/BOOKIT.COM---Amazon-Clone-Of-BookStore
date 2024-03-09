@@ -108,7 +108,7 @@ namespace FirebaseLoginAuth.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> EditBookProductAction(BookProduct bookProduct, IFormFile image)
+        public async Task<IActionResult> EditBookProductAction(BookProduct bookProduct, IFormFile image, IFormFile secondImage)
         {
             var userAuthId = HttpContext.Session.GetString("_UserId");
 
@@ -116,7 +116,7 @@ namespace FirebaseLoginAuth.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    bool result = await FirebaseHelper.UpdateBookProduct(bookProduct, image,userAuthId);
+                    bool result = await FirebaseHelper.UpdateBookProduct(bookProduct, image, secondImage,userAuthId);
                     if (result)
                     {
                         TempData["SuccessMessage"] = "Book product updated successfully!";
@@ -128,7 +128,7 @@ namespace FirebaseLoginAuth.Controllers
                 }
                 else
                 {
-                    bool result = await FirebaseHelper.UpdateBookProduct(bookProduct, image, userAuthId);
+                    bool result = await FirebaseHelper.UpdateBookProduct(bookProduct, image, secondImage, userAuthId);
                     if (result)
                     {
                         TempData["SuccessMessage"] = "Book product updated successfully!";
@@ -205,7 +205,7 @@ namespace FirebaseLoginAuth.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> SaveBookProductOrder(BookProduct bookProduct, IFormFile image)
+        public async Task<IActionResult> SaveBookProductOrder(BookProduct bookProduct, IFormFile image , IFormFile secondImage)
         {
             try
             {
@@ -271,6 +271,19 @@ namespace FirebaseLoginAuth.Controllers
 
                             // Set the image URL in the bookProduct object
                             newBookProduct.ImageUrl = imageUrl;
+                        }
+                        if (image != null && image.Length > 0 && token != null)
+                        {
+                            // Upload first image to Firebase Storage and get the URL
+                            var imageUrl = await FirebaseHelper.UploadImage(image, token);
+                            newBookProduct.ImageUrl = imageUrl;
+
+                            // Check if the format is "Softcover and Hardback" and upload second image if available
+                            if (bookProduct.Format == "Softcover and Hardback" && secondImage != null && secondImage.Length > 0)
+                            {
+                                var secondImageUrl = await FirebaseHelper.UploadImage(secondImage, token);
+                                newBookProduct.SecondImageUrl = secondImageUrl;
+                            }
                         }
                         else {
                             TempData["ErrorMessage"] = "Book product image not saved!";

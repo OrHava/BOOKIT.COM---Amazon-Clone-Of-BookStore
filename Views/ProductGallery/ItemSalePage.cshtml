@@ -24,12 +24,23 @@
         .image-container {
             flex: 1;
             text-align: center;
+            width: 100px; /* Set your desired width */
+            height: 200px; /* Set your desired height */
+            overflow: hidden; /* Ensure the image stays within the container */
+            border: 1px solid #ccc; /* Optional: Add border for clarity */
+            display: flex; /* Ensure child elements (images) follow flexbox rules */
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
         }
 
             .image-container img {
                 max-width: 100%;
+                max-height: 100%;
+                width: auto;
                 height: auto;
+                object-fit: contain; /* Maintain aspect ratio and fit inside the container */
             }
+
 
         .details-container {
             flex: 2;
@@ -203,11 +214,23 @@
             @TempData["NotificationMessage"]
         </div>
     }
-
+    @if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+    {
+        <div class="notification">
+            @TempData["ErrorMessage"]
+        </div>
+    }
     <div class="product-container">
         <div class="image-container">
             <img src="@Model.ImageUrl" alt="Book Image">
         </div>
+
+        @if (Model.Format == "Softcover and Hardback")
+        {
+            <div class="image-container">
+            <img src="@Model.SecondImageUrl" alt="Book Image 2">
+            </div>
+        }
         <div class="details-container">
             <h2>@Model.Name</h2>
             <p>Date of Release: @Model.ReleaseDateFormatted</p>
@@ -326,6 +349,7 @@
             <p><strong>Dimensions:</strong> @Model.Dimensions</p>
             <p><strong>Weight:</strong> @Model.Weight</p>
             <p><strong>Edition:</strong> @Model.Edition</p>
+            <p><strong>Format:</strong> @Model.Format</p>
             <p><strong>Age Limit:</strong> @Model.AgeLimitation</p>
         </div>
 

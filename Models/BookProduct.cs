@@ -35,6 +35,7 @@ namespace FirebaseLoginAuth.Models
         public string? Edition { get; set; }
         public int? AgeLimitation { get; set; }
         public string? ImageUrl { get; set; }
+        public string? SecondImageUrl { get; set; }
 
         public BookProduct()
         {
@@ -88,7 +89,7 @@ namespace FirebaseLoginAuth.Models
     {
         public string? BookId { get; set; }
         public string? CustomerId { get; set; }
-
+        public decimal? Price { get; set; }
         public string? BookName { get; set; }
         public string? CustomerName { get; set; }
     }

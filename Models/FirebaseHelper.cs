@@ -529,7 +529,11 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
 
                             // Populate association with book and customer information
                             if (bookTask.Result != null)
+                            {
                                 association.BookName = bookTask.Result.Name;
+                                association.Price = bookTask.Result.Price;
+                            }
+                           
 
                             association.CustomerName = customerNameTask.Result;
 
@@ -591,7 +595,7 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
             }
         }
 
-        public static async Task<bool> UpdateBookProduct(BookProduct updatedBookProduct, IFormFile image, string atoken)
+        public static async Task<bool> UpdateBookProduct(BookProduct updatedBookProduct, IFormFile image, IFormFile secondImage ,string atoken)
         {
             try
             {
@@ -637,7 +641,15 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                                 existingBookProduct.ImageUrl = imageUrl;
                             }
                         }
-
+                        if (secondImage != null && !string.IsNullOrEmpty(atoken))
+                        {
+                            // Upload the new image
+                            string? secondImageUrl = await UploadImage(secondImage, atoken);
+                            if (secondImageUrl != null) // Ensure imageUrl is not null before assignment
+                            {
+                                existingBookProduct.SecondImageUrl = secondImageUrl;
+                            }
+                        }
                         // Save the updated book product back to the database
                         await firebase.Child(path).PutAsync(existingBookProduct);
                         await firebase.Child(path2).PutAsync(existingBookProduct);

@@ -10,9 +10,19 @@ namespace FirebaseLoginAuth.Controllers
     {
         public IActionResult Index(decimal totalPrice, string bookId)
         {
-            ViewBag.TotalPrice = totalPrice;
-            ViewBag.BookId = bookId;
-            return View();
+            var userType = HttpContext.Session.GetString("_userType");
+            if (userType == "Customer" || userType == null)
+            {
+                ViewBag.TotalPrice = totalPrice;
+                ViewBag.BookId = bookId;
+                return View();
+            }
+            else {
+                TempData["ErrorMessage"] = "Admins cannot pay for products.";
+                return Redirect(Request.Headers["Referer"].ToString());
+            }
+
+           
         }
 
 
@@ -26,6 +36,7 @@ namespace FirebaseLoginAuth.Controllers
              
                 // Once payment is successful, add the bought book(s) to the user's list of bought books
                 var userAuthId = HttpContext.Session.GetString("_UserId");
+
                 if (userAuthId != null)
                 {
                     if (bookId!="Cart") {

@@ -468,6 +468,7 @@
                                         <select class="form-select" id="format" name="Format" asp-for="Format" required>
                                             <option value="Hardback">Hardback</option>
                                             <option value="Softcover">Softcover</option>
+                                            <option value="Softcover and Hardback">Softcover and Hardback</option>
                                         </select>
                                     </div>
 
@@ -531,6 +532,11 @@
                                     <label for="image" class="form-label">Upload Image</label>
                                     <input type="file" class="form-control" id="image" name="image">
                                 </div>
+                                <div class="mb-3" id="secondImageContainer" style="display: none;">
+                                    <label for="secondImage" class="form-label">Upload Second Image</label>
+                                    <input type="file" class="form-control" id="secondImage" name="secondImage">
+                                </div>
+
                                 <div class="row mb-3">
                                     <div class="col-md-12 text-end">
                                     <button type="button" class="btn btn-secondary custom-btn" onclick="prevSection(3)">Back</button>
@@ -562,6 +568,19 @@
             // Trigger change event on page load to show/hide old price container
             $('#isOnSell').trigger('change');
         });
+
+        $(document).ready(function () {
+            $('#format').change(function () {
+                var selectedFormat = $(this).val();
+                if (selectedFormat === 'Softcover and Hardback') {
+                    $('#secondImageContainer').show();
+                } else {
+                    $('#secondImageContainer').hide();
+                }
+            });
+            $('#format').trigger('change');
+        });
+
         var currentSection = 1;
 
         // Function to show a section
@@ -610,7 +629,7 @@
                 var price = parseFloat(document.getElementById('price').value);
                 var oldPrice = parseFloat(document.getElementById('oldPrice').value);
 
-                if ($('#isOnSell').val() === 'true' && oldPrice < price) {
+                if ($('#isOnSell').val() === 'true' && oldPrice <= price) {
                     alert('Old price must be higher than the current price.');
                     event.preventDefault(); // Prevent form submission
                 } else {

@@ -273,6 +273,7 @@
             <select id="format">
                 <option value="Hardback">Hardback</option>
                 <option value="Softcover">Softcover</option>
+            <option value="Softcover and Hardback">Softcover and Hardback</option>
             </select>
         </div>
         <div class="filter-option">
@@ -332,10 +333,7 @@
                                 {
                                     <strong>Old Price:</strong> @(bookProduct.OldPrice.HasValue ? "$" + bookProduct.OldPrice.Value.ToString("0.0") : "N/A")
 
-                                    <br />
-
-
-                                    <br />
+                                
                                 }
                             </td>
                             <td>

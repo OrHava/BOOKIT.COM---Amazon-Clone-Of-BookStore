@@ -1,37 +1,118 @@
 ﻿@model List<FirebaseLoginAuth.Models.BookProduct>
 
+
+    <style>
+    .notification {
+        background-color: #ffebeb;
+        color: #dc3545;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+
+    .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .cart-table th, .cart-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .cart-table th {
+            background-color: #f2f2f2;
+        }
+
+    .cart-buttons {
+        margin-top: 20px;
+    }
+
+    .continue-shopping-button {
+        background-color: #f0c14b;
+        border-color: #a88734 #9c7e31 #846a29;
+        color: #111;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+        .continue-shopping-button:hover {
+            background-color: #e1ac4e;
+        }
+
+    .confirm-payment-button {
+        background-color: #ff9900;
+        border-color: #e47911 #d2770d #bf5f0d;
+        color: #111;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+        .confirm-payment-button:hover {
+            background-color: #ffac33;
+        }
+
+    .disabled-button {
+        background-color: #ccc;
+        border-color: #999;
+        color: #666;
+        cursor: not-allowed;
+    }
+
+    </style>
 <h2>Your Shopping Cart</h2>
+
+@if (!string.IsNullOrEmpty(TempData["ErrorMessage"] as string))
+{
+    <div class="notification">
+        @TempData["ErrorMessage"]
+    </div>
+}
 
 @if (Model != null && Model.Count > 0)
 {
     <table class="cart-table">
-        <tr>
-            <th>Book Title</th>
-            <th>Price</th>
-            <th>Action</th> <!-- New column for the remove button -->
-        </tr>
-        @foreach (var book in Model.Select((value, index) => new { Value = value, Index = index }))
-        {
+        <thead>
             <tr>
-                <td>@book.Value.Name</td>
-                <td>$@book.Value.Price</td>
-                <td>
-                    <form method="post" asp-action="RemoveFromCart" asp-controller="User">
-                        <input type="hidden" name="index" value="@book.Index" />
-                        <button type="submit" class="btn btn-danger">Remove</button>
-                    </form>
-                </td>
+                <th>Book Title</th>
+                <th>Price</th>
+                <th>Action</th> <!-- New column for the remove button -->
             </tr>
-        }
-
-        <tr>
-            <td colspan="2" class="text-right">Total:</td>
-            <td>$@Model.Sum(book => book.Price)</td>
-        </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in Model.Select((value, index) => new { Value = value, Index = index }))
+            {
+                <tr>
+                    <td>@book.Value.Name</td>
+                    <td>$@book.Value.Price</td>
+                    <td>
+                        <form method="post" asp-action="RemoveFromCart" asp-controller="User">
+                            <input type="hidden" name="index" value="@book.Index" />
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="text-right">Total:</td>
+                <td>$@Model.Sum(book => book.Price)</td>
+            </tr>
+        </tfoot>
     </table>
 
     <div class="cart-buttons">
-        <a href="@Url.Action("Index", "Home")" class="a-button continue-shopping-button">Continue Shopping</a>
+        <a href="@Url.Action("Index", "Home")" class="continue-shopping-button">Continue Shopping</a>
     </div>
     <div class="cart-buttons">
         @if (Model != null && Model.Count > 0)
@@ -41,11 +122,11 @@
 
             if (!anyUnavailable)
             {
-                <a href="@Url.Action("Index", "Payment", new { totalPrice = Model.Sum(book => book.Price) , bookId = "Cart" })" class="btn btn-primary">Confirm Payment</a>
+                <a href="@Url.Action("Index", "Payment", new { totalPrice = Model.Sum(book => book.Price), bookId = "Cart" })" class="confirm-payment-button">Confirm Payment</a>
             }
             else
             {
-                <button class="btn btn-primary" disabled>Proceed to Payment</button>
+                <button class="disabled-button" disabled>Proceed to Payment</button>
                 <p>The following books are not available:</p>
                 <ul>
                     @foreach (var book in Model.Where(book => book.NumberOfAvailability <= 0))
@@ -57,11 +138,9 @@
         }
         else
         {
-            <button class="btn btn-primary" disabled>Proceed to Payment</button>
+            <button class="disabled-button" disabled>Proceed to Payment</button>
         }
     </div>
-
-
 }
 else
 {

@@ -10,7 +10,9 @@
 
                 <th>Book ID</th>
                 <th>Book Name</th>
+                <th>Book Price</th>
                 <th>Customer Name</th>
+              
             </tr>
         </thead>
         <tbody>
@@ -19,10 +21,17 @@
                 <tr>
                     <td>@association.BookId</td>
                     <td>@association.BookName</td>
+                    <th>$@association.Price</th>
                     <td>@association.CustomerName</td>
+                
                 </tr>
+               
             }
         </tbody>
+        <tr>
+            <td colspan="2" class="text-right">Total earnings:</td>
+            <td>$@Model.Sum(association => association.Price)</td>
+        </tr>
     </table>
 }
 else
