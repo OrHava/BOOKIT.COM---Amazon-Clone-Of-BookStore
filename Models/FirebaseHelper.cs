@@ -824,12 +824,13 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
 
                 if (!string.IsNullOrEmpty(searchQuery))
                 {
-                    filteredProducts = filteredProducts.Where(p => p.Name == searchQuery).ToList();
-
-
+                    filteredProducts = filteredProducts
+                        .Where(p => p.Name != null &&
+                                    p.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
                 }
 
-  
+
 
                 Console.WriteLine($"After filteredProducts: ");
                 foreach (var book in filteredProducts)
