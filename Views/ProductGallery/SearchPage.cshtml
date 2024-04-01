@@ -16,13 +16,10 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
     <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
 
-    <!-- Include jQuery -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-    <!-- Include Select2 CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 
-    <!-- Include Select2 JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
 
@@ -36,36 +33,36 @@
     }
 
     .welcome-text {
-        font-size: 1rem; /* Adjust the font size of the welcome text */
-        margin-top: 0.5rem; /* Add some top margin for spacing */
+        font-size: 1rem; 
+        margin-top: 0.5rem; 
     }
 
     .avatar-icon {
-        width: 30px; /* Adjust the width of the avatar icon */
-        height: auto; /* Maintain aspect ratio */
-        margin-left: 10px; /* Add some left margin for spacing */
+        width: 30px;
+        height: auto; 
+        margin-left: 10px; 
     }
 
     .logout-icon {
-        width: 24px; /* Adjust the width of the logout icon */
-        height: auto; /* Maintain aspect ratio */
+        width: 24px; 
+        height: auto;
     }
 
     .text-right {
-        text-align: right; /* Align the text and icons to the right */
+        text-align: right; 
     }
 
     .logout-link {
-        color: #333; /* Ensure the color of the logout link is visible */
-        text-decoration: none; /* Remove default underline from the link */
-        margin-right: 10px; /* Add right margin to the logout link */
+        color: #333; 
+        text-decoration: none;
+        margin-right: 10px; 
     }
 
         .logout-link:hover {
-            color: #555; /* Change color on hover for better visibility */
+            color: #555; 
         }
 
-    /* Adjust padding and margin for the row */
+
     .row {
         margin-left: -5px;
         margin-right: -5px;
@@ -76,15 +73,15 @@
 
     .search-row {
         background: rgba(255, 255, 255, 0.3);
-        padding: 20px; /* Add padding for spacing */
-        border-radius: 10px; /* Add some rounded corners */
-        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+        padding: 20px; 
+        border-radius: 10px;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
     }
 
     .search-input {
-        height: 50px; /* Increase input height */
-        border-radius: 8px; /* Add rounded corners to inputs */
-        border: 1px solid #ccc; /* Add a border for better visibility */
+        height: 50px; 
+        border-radius: 8px;
+        border: 1px solid #ccc; 
     }
 
     .modern-card {
@@ -284,8 +281,6 @@
 
     </div>
 
-    <!-- Dimmed background -->
-<!-- Dimmed background -->
 <div class="dim-background" id="dim-background"></div>
 
 
@@ -318,6 +313,7 @@
                                 <strong>Stock Availability:</strong> @bookProduct.NumberOfAvailability<br />
                                 <strong>Price:</strong> $@bookProduct.Price<br />
                                 <strong>ISBN:</strong> @bookProduct.ISBN<br />
+                                <strong>bookProduct ID:</strong> @bookProduct.BookId<br />
                                 <strong>Pages:</strong> @bookProduct.Pages<br />
                                 <strong>Language:</strong> @bookProduct.Language<br />
                                 <strong>Genre:</strong> @bookProduct.Genre<br />

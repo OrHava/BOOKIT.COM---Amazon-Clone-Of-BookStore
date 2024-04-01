@@ -10,7 +10,7 @@ namespace FirebaseLoginAuth.Models
     {
         public string? BookId { get; set; }
         public string? AdminId { get; set; }
-
+        public int? OrderBooks { get; set; }
         public int? SoldBooks  { get; set; }
     public string? Name { get; set; }
         public string? Author { get; set; }
@@ -90,6 +90,7 @@ namespace FirebaseLoginAuth.Models
         public string? BookId { get; set; }
         public string? CustomerId { get; set; }
         public decimal? Price { get; set; }
+        public int? OrderBooks { get; set; }
         public string? BookName { get; set; }
         public string? CustomerName { get; set; }
     }

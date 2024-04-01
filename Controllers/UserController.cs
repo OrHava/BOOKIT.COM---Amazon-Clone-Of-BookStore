@@ -24,9 +24,11 @@ namespace FirebaseLoginAuth.Controllers
             }
 
             var book = await FirebaseHelper.GetBookProductById(bookId);
+            
 
             if (book != null)
             {
+                book.OrderBooks = 1;
                 // Add the book to the user's cart in Firebase
                 await FirebaseHelper.AddItemToCart(userAuthId, book);
             }
@@ -60,6 +62,33 @@ namespace FirebaseLoginAuth.Controllers
                 return 0;
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> UpdateCart(Dictionary<int, int> quantities)
+        {
+            var userAuthId = HttpContext.Session.GetString("_UserId");
+
+            // Get the cart count
+            var cartCount = await GetCartCount();
+
+            // Pass the cart count to the view
+            ViewData["CartCount"] = cartCount;
+
+            if (userAuthId != null)
+            {
+                foreach (var entry in quantities)
+                {
+                    int index = entry.Key;
+                    int quantity = entry.Value;
+
+                    // Update the quantity of the book in the user's cart
+                    await FirebaseHelper.UpdateCartQuantity(userAuthId, index, quantity);
+                }
+
+                return RedirectToAction("Cart");
+            }
+
+            return RedirectToAction("Cart");
+        }
 
         public async Task<IActionResult> Cart()
         {
@@ -87,10 +116,11 @@ namespace FirebaseLoginAuth.Controllers
         [HttpPost]
         public async Task<IActionResult> RemoveFromCart(int index)
         {
+            Console.WriteLine($"cart index: {index}");
             var userAuthId = HttpContext.Session.GetString("_UserId");
             // Get the cart count
             var cartCount = await GetCartCount();
-
+ 
             // Pass the cart count to the view
             ViewData["CartCount"] = cartCount;
             if (userAuthId != null)

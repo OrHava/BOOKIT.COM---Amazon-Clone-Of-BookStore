@@ -10,6 +10,7 @@
 
                 <th>Book ID</th>
                 <th>Book Name</th>
+                <th>Amount</th>
                 <th>Book Price</th>
                 <th>Customer Name</th>
               
@@ -21,8 +22,10 @@
                 <tr>
                     <td>@association.BookId</td>
                     <td>@association.BookName</td>
-                    <th>$@association.Price</th>
-                    <td>@association.CustomerName</td>
+                    <td>@(association.OrderBooks ?? 1)</td>
+                    <th>$@(association.Price * (association.OrderBooks ?? 1))</th>
+                    <td>@(association.CustomerName ?? "Guest")</td>
+
                 
                 </tr>
                
@@ -30,7 +33,8 @@
         </tbody>
         <tr>
             <td colspan="2" class="text-right">Total earnings:</td>
-            <td>$@Model.Sum(association => association.Price)</td>
+            <td>$@Model.Sum(association => (association.Price * (association.OrderBooks ?? 1)))</td>
+
         </tr>
     </table>
 }

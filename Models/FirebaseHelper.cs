@@ -243,6 +243,44 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                 return false;
             }
         }
+        public static async Task<bool> UpdateCartQuantity(string userId, int index, int quantity)
+        {
+            try
+            {
+                // Construct the path to the user's cart
+                string cartPath = $"users/{userId}/cart";
+
+                // Retrieve the user's current cart
+                var userCart = await firebase.Child(cartPath).OnceSingleAsync<List<BookProduct>>();
+
+                // If the user's cart is null or empty, return false
+                if (userCart == null || userCart.Count == 0)
+                {
+                    Console.WriteLine("Cart is empty.");
+                    return false;
+                }
+
+                // Check if the index is within the range of the cart
+                if (index < 0 || index >= userCart.Count)
+                {
+                    Console.WriteLine("Invalid index.");
+                    return false;
+                }
+
+                // Update the quantity of the book at the specified index
+                userCart[index].OrderBooks = quantity;
+
+                // Update the user's cart in the database
+                await firebase.Child(cartPath).PutAsync(userCart);
+
+                return true; // Update successful
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating cart quantity: {ex.Message}");
+                return false; // Update failed
+            }
+        }
 
         public static async Task<bool> AddItemToNotify(string userId, BookProduct book)
         {
@@ -461,10 +499,10 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                         if (existingBookProduct != null)
                         {
                             // Update the existing book product's NumberOfAvailability property
-                            existingBookProduct.NumberOfAvailability -= 1; // Decrease availability by 1
+                            existingBookProduct.NumberOfAvailability -= book.OrderBooks; // Decrease availability by 1
                                                                            // Increment sold count or set to 1 if not exist
                         existingBookProduct.SoldBooks = existingBookProduct.SoldBooks ?? 0;
-                        existingBookProduct.SoldBooks += 1;
+                        existingBookProduct.SoldBooks += book.OrderBooks;
                         // Save the updated book product back to the database in the products root
                         await firebase.Child(productsRootPath).PutAsync(existingBookProduct);
 
@@ -475,7 +513,8 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
                             var association = new BookCustomerAssociation
                             {
                                 BookId = book.BookId,
-                                CustomerId = customerId
+                                CustomerId = customerId,
+                                OrderBooks= book.OrderBooks,
                             };
 
                             // Save the association to the ProductsBought node under the admin's root

@@ -31,10 +31,9 @@ namespace FirebaseLoginAuth.Controllers
         {
             try
             {
-                // Perform payment processing here, assuming it's successful for demonstration purposes
-                // You may integrate with a payment gateway or service
+           
              
-                // Once payment is successful, add the bought book(s) to the user's list of bought books
+
                 var userAuthId = HttpContext.Session.GetString("_UserId");
 
                 if (userAuthId != null)

@@ -11,11 +11,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
-        /* Add your custom styles here */
         body {
             background-color: #f8f9fa;
             font-family: Arial, sans-serif;
-          /*  margin-bottom: 100px;*/
         }
 
     
@@ -46,7 +44,7 @@
             color: white;
             padding: 3px 8px;
             border-radius: 50%; /* Make it round */
-            margin-right: 8px; /* Add some space between the number and the title */
+            margin-right: 8px; 
         }
 
         .card-title {
@@ -108,14 +106,12 @@
                     </div>
 
 
-                    <!-- Display Success Message -->
                     @if (TempData["SuccessMessage"] != null)
                     {
                         <div class="alert alert-success" role="alert">
                             @TempData["SuccessMessage"]
                         </div>
                     }
-                    <!-- Display Error Message -->
                     @if (TempData["ErrorMessage"] != null)
                     {
                         <div class="alert alert-danger" role="alert">

@@ -8,8 +8,9 @@
         <thead>
             <tr>
                 <th>Book Title</th>
+                <th>Amount</th>
                 <th>Price</th>
-                <!-- Add more columns as needed -->
+
             </tr>
         </thead>
         <tbody>
@@ -17,8 +18,11 @@
             {
                 <tr>
                     <td>@item.Name</td>
-                    <td>$@item.Price</td>
-                    <!-- Add more columns as needed -->
+                    <td>@(item.OrderBooks ?? 1)</td>
+                    <th>$@(item.Price * (item.OrderBooks ?? 1))</th>
+
+                
+            
                 </tr>
             }
         </tbody>

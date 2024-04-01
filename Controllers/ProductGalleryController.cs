@@ -50,11 +50,8 @@ namespace FirebaseLoginAuth.Controllers
                 }
          
 
-            // If userAuthId is null or empty, or if bookProduct is null,
-            // or if there's any other condition where you don't return a View,
-            // you should return an appropriate action result, such as a redirect.
 
-            return RedirectToAction("Index", "Home"); // Example redirect to Home/Index
+            return RedirectToAction("Index", "Home"); 
         }
 
         public async Task<IActionResult> SearchPage(string bookId)
@@ -74,11 +71,9 @@ namespace FirebaseLoginAuth.Controllers
             }
 
 
-            // If userAuthId is null or empty, or if bookProduct is null,
-            // or if there's any other condition where you don't return a View,
-            // you should return an appropriate action result, such as a redirect.
 
-            return RedirectToAction("Index", "Home"); // Example redirect to Home/Index
+
+            return RedirectToAction("Index", "Home");
         }
         [HttpPost]
         public async Task<IActionResult> SearchBooks(string searchInput)

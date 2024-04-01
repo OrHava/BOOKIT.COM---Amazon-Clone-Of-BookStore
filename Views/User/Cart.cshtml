@@ -80,12 +80,15 @@
 
 @if (Model != null && Model.Count > 0)
 {
+    <form method="post" asp-action="UpdateCart" asp-controller="User">
     <table class="cart-table">
         <thead>
             <tr>
                 <th>Book Title</th>
                 <th>Price</th>
-                <th>Action</th> <!-- New column for the remove button -->
+                <th>Quantity</th> 
+                <th>Total Price</th> 
+                <th>Action</th> 
             </tr>
         </thead>
         <tbody>
@@ -94,6 +97,10 @@
                 <tr>
                     <td>@book.Value.Name</td>
                     <td>$@book.Value.Price</td>
+                    <td>
+                        <input type="number" name="quantities[@book.Index]" min="1" max="@book.Value.NumberOfAvailability" value="@(book.Value.OrderBooks != null && book.Value.OrderBooks > 0 ? book.Value.OrderBooks : 1)" />
+                    </td>
+                    <td>$@(book.Value.Price * book.Value.OrderBooks)</td> <!-- Total price for the book -->
                     <td>
                         <form method="post" asp-action="RemoveFromCart" asp-controller="User">
                             <input type="hidden" name="index" value="@book.Index" />
@@ -106,7 +113,10 @@
         <tfoot>
             <tr>
                 <td colspan="2" class="text-right">Total:</td>
-                <td>$@Model.Sum(book => book.Price)</td>
+                <td>$@Model.Sum(book => book.Price * book.OrderBooks)</td> <!-- Total price for all books -->
+                <td>
+                    <button type="submit" class="btn btn-primary">Update Cart</button> <!-- Button to submit form -->
+                </td>
             </tr>
         </tfoot>
     </table>
@@ -122,7 +132,7 @@
 
             if (!anyUnavailable)
             {
-                <a href="@Url.Action("Index", "Payment", new { totalPrice = Model.Sum(book => book.Price), bookId = "Cart" })" class="confirm-payment-button">Confirm Payment</a>
+                    <a href="@Url.Action("Index", "Payment", new { totalPrice = @Model.Sum(book => book.Price * book.OrderBooks), bookId = "Cart" })" class="confirm-payment-button">Confirm Payment</a>
             }
             else
             {
@@ -141,6 +151,7 @@
             <button class="disabled-button" disabled>Proceed to Payment</button>
         }
     </div>
+    </form>
 }
 else
 {
