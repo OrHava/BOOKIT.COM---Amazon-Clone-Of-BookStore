@@ -77,81 +77,68 @@
         @TempData["ErrorMessage"]
     </div>
 }
-
 @if (Model != null && Model.Count > 0)
 {
     <form method="post" asp-action="UpdateCart" asp-controller="User">
-    <table class="cart-table">
-        <thead>
-            <tr>
-                <th>Book Title</th>
-                <th>Price</th>
-                <th>Quantity</th> 
-                <th>Total Price</th> 
-                <th>Action</th> 
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var book in Model.Select((value, index) => new { Value = value, Index = index }))
-            {
+        <table class="cart-table">
+            <thead>
                 <tr>
-                    <td>@book.Value.Name</td>
-                    <td>$@book.Value.Price</td>
-                    <td>
-                        <input type="number" name="quantities[@book.Index]" min="1" max="@book.Value.NumberOfAvailability" value="@(book.Value.OrderBooks != null && book.Value.OrderBooks > 0 ? book.Value.OrderBooks : 1)" />
-                    </td>
-                    <td>$@(book.Value.Price * book.Value.OrderBooks)</td> <!-- Total price for the book -->
-                    <td>
-                        <form method="post" asp-action="RemoveFromCart" asp-controller="User">
+                    <th>Book Title</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var book in Model.Select((value, index) => new { Value = value, Index = index }))
+                {
+                    <tr>
+                        <td>@book.Value.Name</td>
+                        <td>$@book.Value.Price</td>
+                        <td>
+                            <input type="number" name="quantities[@book.Index]" min="1" max="@book.Value.NumberOfAvailability" value="@(book.Value.OrderBooks != null && book.Value.OrderBooks > 0 ? book.Value.OrderBooks : 1)" />
+                        </td>
+                        <td>$@(book.Value.Price * book.Value.OrderBooks)</td> <!-- Total price for the book -->
+                        <td>
                             <input type="hidden" name="index" value="@book.Index" />
-                            <button type="submit" class="btn btn-danger">Remove</button>
-                        </form>
+                            <button type="submit" formaction="@Url.Action("RemoveFromCart", "User")" class="btn btn-danger">Remove</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2" class="text-right">Total:</td>
+                    <td>$@Model.Sum(book => book.Price * book.OrderBooks)</td> <!-- Total price for all books -->
+                    <td>
+                        <button type="submit" class="btn btn-primary">Update Cart</button> <!-- Button to submit form -->
                     </td>
                 </tr>
-            }
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="2" class="text-right">Total:</td>
-                <td>$@Model.Sum(book => book.Price * book.OrderBooks)</td> <!-- Total price for all books -->
-                <td>
-                    <button type="submit" class="btn btn-primary">Update Cart</button> <!-- Button to submit form -->
-                </td>
-            </tr>
-        </tfoot>
-    </table>
+            </tfoot>
+        </table>
+    </form>
 
     <div class="cart-buttons">
         <a href="@Url.Action("Index", "Home")" class="continue-shopping-button">Continue Shopping</a>
     </div>
     <div class="cart-buttons">
-        @if (Model != null && Model.Count > 0)
+        @if (Model.Any(book => book.NumberOfAvailability <= 0))
         {
-            // Check if any book has availability less than or equal to 0
-            bool anyUnavailable = Model.Any(book => book.NumberOfAvailability <= 0);
-
-            if (!anyUnavailable)
-            {
-                    <a href="@Url.Action("Index", "Payment", new { totalPrice = @Model.Sum(book => book.Price * book.OrderBooks), bookId = "Cart" })" class="confirm-payment-button">Confirm Payment</a>
-            }
-            else
-            {
-                <button class="disabled-button" disabled>Proceed to Payment</button>
-                <p>The following books are not available:</p>
-                <ul>
-                    @foreach (var book in Model.Where(book => book.NumberOfAvailability <= 0))
-                    {
-                        <li>@book.Name</li>
-                    }
-                </ul>
-            }
+            <button class="disabled-button" disabled>Proceed to Payment</button>
+            <p>The following books are not available:</p>
+            <ul>
+                @foreach (var book in Model.Where(book => book.NumberOfAvailability <= 0))
+                {
+                    <li>@book.Name</li>
+                }
+            </ul>
         }
         else
         {
-            <button class="disabled-button" disabled>Proceed to Payment</button>
+            <a href="@Url.Action("Index", "Payment", new { totalPrice = @Model.Sum(book => book.Price * book.OrderBooks), bookId = "Cart" })" class="confirm-payment-button">Confirm Payment</a>
         }
     </div>
-    </form>
 }
 else
 {

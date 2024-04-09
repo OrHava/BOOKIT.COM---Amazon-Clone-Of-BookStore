@@ -181,6 +181,8 @@ namespace FirebaseLoginAuth.Helpers // Adjusted the namespace
 
         public static async Task<bool> RemoveFromCart(string userId, int index)
         {
+
+            Console.WriteLine($"index cart: {index}");
             try
             {
                 // Construct the path to the user's cart
